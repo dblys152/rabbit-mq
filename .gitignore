@@ -1,3 +1,5 @@
+rabbitmq_data/
+
 HELP.md
 .gradle
 gradle

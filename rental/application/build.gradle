@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':rental:domain')
+}
+
+bootJar {
+    enabled(false)
+}
