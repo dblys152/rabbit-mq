@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':product:domain')
+}
+
+bootJar {
+    enabled(false)
+}

@@ -2,6 +2,11 @@ rootProject.name = 'rabbit-mq'
 
 include 'event-store:adapter'
 
+include 'product:refs:category'
+include 'product:domain'
+include 'product:application'
+include 'product:adapter'
+
 include 'rental:domain'
 include 'rental:application'
 include 'rental:adapter'
