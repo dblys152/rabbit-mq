@@ -7,5 +7,5 @@ import lombok.Value;
 public class CategoryId {
 
     @NotNull
-    Integer id;
+    String id;
 }

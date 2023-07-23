@@ -1,4 +1,4 @@
-package com.ys.product.domain.product.fixture;
+package com.ys.product.adapter.out.persistence.fixture;
 
 import com.ys.product.domain.product.*;
 import com.ys.product.refs.category.CategoryId;

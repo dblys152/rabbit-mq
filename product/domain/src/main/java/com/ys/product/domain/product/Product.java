@@ -1,8 +1,10 @@
 package com.ys.product.domain.product;
 
+import com.fasterxml.uuid.Generators;
 import com.ys.product.refs.category.CategoryId;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.LocalDateTime;
 
@@ -12,12 +14,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @ToString
-public class Product {
+public class Product extends AbstractAggregateRoot<Product> {
 
     private static final LocalDateTime NOW = LocalDateTime.now();
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EmbeddedId
     @Column(name = "PRODUCT_ID")
     private ProductId productId;
 
@@ -52,7 +53,8 @@ public class Product {
         return new Product(productId, type, categoryId, name, price, status, createdAt, modifiedAt, deletedAt, version);
     }
 
-    public Product(ProductType type, CategoryId categoryId, String name, Money price, ProductStatus status) {
+    public Product(ProductId productId, ProductType type, CategoryId categoryId, String name, Money price, ProductStatus status) {
+        this.productId = productId;
         this.type = type;
         this.categoryId = categoryId;
         this.name = name;
@@ -62,7 +64,9 @@ public class Product {
     }
 
     public static Product create(CreateProductCommand command) {
+        ProductId productId = ProductId.of(Generators.timeBasedEpochGenerator().generate().toString());
         return new Product(
+                productId,
                 command.getType(),
                 command.getCategoryId(),
                 command.getName(),

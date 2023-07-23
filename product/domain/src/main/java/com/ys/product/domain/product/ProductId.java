@@ -1,5 +1,6 @@
 package com.ys.product.domain.product;
 
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -7,5 +8,5 @@ import lombok.*;
 public class ProductId {
 
     @NotNull
-    Integer id;
+    String id;
 }

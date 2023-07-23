@@ -1,7 +1,6 @@
 package com.ys.product.domain.product;
 
 import com.ys.product.domain.product.fixture.SupportProductFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
