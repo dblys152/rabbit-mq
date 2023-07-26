@@ -81,14 +81,16 @@ public class Rental extends AbstractAggregateRoot<Rental> {
         scheduleValidation();
     }
 
-    public static Rental create(
-            UserId userId,
-            RentalLines rentalLines,
-            LocalDateTime rentedAt,
-            LocalDateTime scheduledReturnAt
-    ) {
+    public static Rental create(CreateRentalCommand command) {
         RentalId rentalId = RentalId.of(Generators.timeBasedEpochGenerator().generate().toString());
-        return new Rental(rentalId, userId, RentalStatus.RENTED, rentalLines, rentedAt, scheduledReturnAt);
+        return new Rental(
+                rentalId,
+                command.getUserId(),
+                RentalStatus.RENTED,
+                command.getRentalLines(),
+                command.getRentedAt(),
+                command.getScheduledReturnAt()
+        );
     }
 
     private void scheduleValidation() {
@@ -97,15 +99,15 @@ public class Rental extends AbstractAggregateRoot<Rental> {
         }
     }
 
-    public void doReturn(LocalDateTime returnedAt) {
+    public void doReturn(DoReturnCommand command) {
         if (this.status != RentalStatus.RENTED) {
             throw new IllegalStateException("반납은 대여중 상태에서만 가능합니다.");
         }
-        if (returnedAt.isBefore(this.rentedAt)) {
+        if (command.getReturnedAt().isBefore(this.rentedAt)) {
             throw new IllegalArgumentException("반납일이 대여일보다 이전 일 수 없습니다.");
         }
         this.status = RentalStatus.RETURNED;
-        this.returnedAt = returnedAt;
+        this.returnedAt = command.getReturnedAt();
         this.modifiedAt = NOW;
     }
 
