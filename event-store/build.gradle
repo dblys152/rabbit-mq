@@ -6,10 +6,13 @@ plugins {
 }
 
 def javaProjects = [
+        project(":event-store:domain"),
+        project(":event-store:application"),
         project(":event-store:adapter")
 
 ]
 def springBootProjects = [
+        project(":event-store:application"),
         project(":event-store:adapter")
 ]
 
