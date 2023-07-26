@@ -31,4 +31,8 @@ public class RentalLines {
                     throw new IllegalArgumentException("상품을 중복해서 넣을 수 없습니다.");
                 });
     }
+
+    public boolean isEmpty() {
+        return this.items.isEmpty();
+    }
 }
