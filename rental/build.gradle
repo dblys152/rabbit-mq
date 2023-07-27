@@ -16,6 +16,9 @@ def springBootProjects = [
         project(":rental:application"),
         project(":rental:adapter")
 ]
+def queryDslProjects = [
+        project(":rental:adapter")
+]
 
 configure(javaProjects) {
     apply plugin: "java"
@@ -54,6 +57,36 @@ configure(springBootProjects) {
         implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
         testImplementation "org.springframework.boot:spring-boot-starter-test"
+    }
+}
+
+configure(queryDslProjects) {
+    dependencies {
+        implementation 'com.querydsl:querydsl-core:5.0.0'
+        implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+        annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+        annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+        annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    }
+
+    def querydslDir = "$buildDir/generated/querydsl"
+    sourceSets {
+        main.java.srcDirs += [ querydslDir ]
+    }
+
+    tasks.withType(JavaCompile) {
+        options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+        querydsl.extendsFrom compileClasspath
+    }
+
+    clean {
+        delete file(querydslDir)
     }
 }
 

@@ -1,4 +1,6 @@
 dependencies {
+    implementation project(':product:domain')
+    implementation project(':rental:refs:user')
     implementation project(':rental:domain')
     implementation project(':rental:application')
 
