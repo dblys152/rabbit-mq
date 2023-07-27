@@ -12,9 +12,18 @@ class ProductTest extends SupportProductFixture {
     @Test
     void 상품을_등록한다() {
         CreateProductCommand command = CREATE_PRODUCT_COMMAND;
+
         Product actual = Product.create(command);
 
-        assertThat(actual).isNotNull();
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getProductId()).isNotNull(),
+                () -> assertThat(actual.getType()).isEqualTo(command.getType()),
+                () -> assertThat(actual.getCategoryId()).isEqualTo(command.getCategoryId()),
+                () -> assertThat(actual.getName()).isEqualTo(command.getName()),
+                () -> assertThat(actual.getPrice()).isEqualTo(command.getPrice()),
+                () -> assertThat(actual.getStatus()).isEqualTo(command.getStatus())
+        );
     }
 
     @Test

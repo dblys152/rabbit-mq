@@ -1,7 +1,7 @@
 package com.ys.product.domain.product;
 
 import com.fasterxml.uuid.Generators;
-import com.ys.product.refs.category.CategoryId;
+import com.ys.product.refs.category.domain.CategoryId;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.AbstractAggregateRoot;

@@ -1,4 +1,4 @@
-package com.ys.product.refs.category;
+package com.ys.product.refs.category.domain;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;

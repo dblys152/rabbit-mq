@@ -1,6 +1,6 @@
 package com.ys.product.domain.product.converter;
 
-import com.ys.product.refs.category.CategoryId;
+import com.ys.product.refs.category.domain.CategoryId;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

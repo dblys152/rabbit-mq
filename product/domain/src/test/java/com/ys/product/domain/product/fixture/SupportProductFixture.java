@@ -1,7 +1,7 @@
 package com.ys.product.domain.product.fixture;
 
 import com.ys.product.domain.product.*;
-import com.ys.product.refs.category.CategoryId;
+import com.ys.product.refs.category.domain.CategoryId;
 
 import java.time.LocalDateTime;
 
