@@ -14,13 +14,14 @@ public class SupportRentalFixture {
     protected static final UserId USER_ID = UserId.of("USER_ID");
     protected static final ProductId PRODUCT_ID = ProductId.of("PRODUCT_ID");
     protected static final ProductId PRODUCT_ID_2 = ProductId.of("PRODUCT_ID_2");
+    protected static final Money MONEY_1000 = Money.of(1000);
     protected static final int QUANTITY_ONE = 1;
     protected static final int QUANTITY_TWO = 2;
-    protected static final RentalLine RENTAL_LINE = RentalLine.of(PRODUCT_ID, QUANTITY_ONE);
-    protected static final RentalLine RENTAL_LINE_2 = RentalLine.of(PRODUCT_ID_2, QUANTITY_TWO);
+    protected static final RentalLine RENTAL_LINE = RentalLine.of(RENTAL_ID, PRODUCT_ID, MONEY_1000, QUANTITY_ONE);
+    protected static final RentalLine RENTAL_LINE_2 = RentalLine.of(RENTAL_ID, PRODUCT_ID_2, MONEY_1000, QUANTITY_TWO);
     protected static final RentalLines RENTAL_LINES = RentalLines.of(Arrays.asList(RENTAL_LINE, RENTAL_LINE_2));
     protected static final CreateRentalCommand CREATE_RENTAL_COMMAND = CreateRentalCommand.of(
-            USER_ID, RENTAL_LINES, NOW, NOW.plusHours(3));
+            RENTAL_ID, USER_ID, RENTAL_LINES, NOW, NOW.plusHours(3));
     protected static final Rental RENTAL = Rental.of(
             RENTAL_ID, USER_ID, RentalStatus.RENTED, RENTAL_LINES, NOW, NOW.plusHours(3), null, NOW, NOW, 0L);
     protected static final Rental RETURNED_RENTAL = Rental.of(

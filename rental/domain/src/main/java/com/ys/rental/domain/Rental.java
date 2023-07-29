@@ -8,7 +8,7 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "PRODUCT_LIST")
+@Entity(name = "RENTAL_LIST")
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -82,9 +82,8 @@ public class Rental extends AbstractAggregateRoot<Rental> {
     }
 
     public static Rental create(CreateRentalCommand command) {
-        RentalId rentalId = RentalId.of(Generators.timeBasedEpochGenerator().generate().toString());
         return new Rental(
-                rentalId,
+                command.getRentalId(),
                 command.getUserId(),
                 RentalStatus.RENTED,
                 command.getRentalLines(),
