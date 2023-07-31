@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 @Configuration
 @EnableJpaAuditing
-@EntityScan("com.ys.rental.domain")
+@EntityScan("com.ys.rental.adapter")
 @EnableJpaRepositories(basePackages = "com.ys.rental.adapter")
 public class DataJpaConfig {
 
@@ -63,7 +63,7 @@ public class DataJpaConfig {
             EntityManagerFactoryBuilder builder) {
         return builder
                 .dataSource(dataSource())
-                .packages("com.ys.rental.domain")
+                .packages("com.ys.rental.adapter")
                 .build();
     }
 
