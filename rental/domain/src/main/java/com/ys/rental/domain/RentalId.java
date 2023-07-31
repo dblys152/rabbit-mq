@@ -7,5 +7,5 @@ import lombok.Value;
 public class RentalId {
 
     @NotNull
-    String id;
+    Integer id;
 }

@@ -2,7 +2,9 @@ package com.ys.rental.domain;
 
 import com.ys.product.domain.product.Product;
 import com.ys.product.domain.product.ProductId;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,13 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Embeddable
 @Value(staticConstructor = "of")
 public class RentalLines {
 
     @NotNull
     @Size(min = 1)
-    @OneToMany()
     List<RentalLine> items;
 
     private RentalLines(List<RentalLine> items) {

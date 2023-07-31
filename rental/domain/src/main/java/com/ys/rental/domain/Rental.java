@@ -1,52 +1,30 @@
 package com.ys.rental.domain;
 
-import com.fasterxml.uuid.Generators;
 import com.ys.rental.refs.user.domain.UserId;
-import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Entity(name = "RENTAL_LIST")
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @ToString
-public class Rental extends AbstractAggregateRoot<Rental> {
+public class Rental {
 
     private static final LocalDateTime NOW = LocalDateTime.now();
 
-    @EmbeddedId
-    @Column(name = "RENTAL_ID")
     private RentalId rentalId;
-
-    @Column(name = "USER_ID", nullable = false)
     private UserId userId;
-
-    @Column(name = "STATUS", nullable = false)
-    @Enumerated(EnumType.STRING)
     private RentalStatus status;
-
-    @Embedded
     private RentalLines rentalLines;
-
-    @Column(name = "RENTED_AT", nullable = false)
     private LocalDateTime rentedAt;
-
-    @Column(name = "SCHEDULED_RETURN_AT", nullable = false)
     private LocalDateTime scheduledReturnAt;
-
-    @Column(name = "RETURNED_AT", nullable = false)
     private LocalDateTime returnedAt;
 
-    @Column(name = "CREATED_AT", nullable = false)
-    private LocalDateTime createdAt = NOW;
-    @Column(name = "MODIFIED_AT", nullable = false)
-    private LocalDateTime modifiedAt = NOW;
-    @Version
-    @Column(name = "VERSION")
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
     private Long version;
 
     public static Rental of(
@@ -65,14 +43,12 @@ public class Rental extends AbstractAggregateRoot<Rental> {
     }
 
     public Rental(
-            RentalId rentalId,
             UserId userId,
             RentalStatus status,
             RentalLines rentalLines,
             LocalDateTime rentedAt,
             LocalDateTime scheduledReturnAt
     ) {
-        this.rentalId = rentalId;
         this.userId = userId;
         this.status = status;
         this.rentalLines = rentalLines;
@@ -83,13 +59,17 @@ public class Rental extends AbstractAggregateRoot<Rental> {
 
     public static Rental create(CreateRentalCommand command) {
         return new Rental(
-                command.getRentalId(),
                 command.getUserId(),
                 RentalStatus.RENTED,
                 command.getRentalLines(),
                 command.getRentedAt(),
                 command.getScheduledReturnAt()
         );
+    }
+
+    public RentalLines changeRentalLines(List<RentalLine> rentalLineList) {
+        this.rentalLines = RentalLines.of(rentalLineList);
+        return this.rentalLines;
     }
 
     private void scheduleValidation() {

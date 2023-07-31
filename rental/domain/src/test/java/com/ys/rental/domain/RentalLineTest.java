@@ -13,7 +13,7 @@ class RentalLineTest extends SupportRentalFixture {
 
     @Test
     void 대여_품목의_수량이_0이하이면_에러를_반환한다() {
-        assertThatThrownBy(() -> RentalLine.of(RENTAL_ID, PRODUCT_ID, MONEY_1000, ZERO)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> RentalLine.of(RENTAL_ID, PRODUCT_ID, MONEY_1000, MINUS_ONE)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> RentalLine.create(PRODUCT_ID, MONEY_1000, ZERO)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> RentalLine.create(PRODUCT_ID, MONEY_1000, MINUS_ONE)).isInstanceOf(IllegalArgumentException.class);
     }
 }

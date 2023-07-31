@@ -19,7 +19,6 @@ class RentalTest extends SupportRentalFixture {
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getRentalId()).isNotNull(),
                 () -> assertThat(actual.getUserId()).isEqualTo(command.getUserId()),
                 () -> assertThat(actual.getStatus()).isEqualTo(RentalStatus.RENTED),
                 () -> assertThat(actual.getRentalLines().isEmpty()).isFalse(),
@@ -32,7 +31,7 @@ class RentalTest extends SupportRentalFixture {
     public void 대여정보_생성_시_반납예정일이_대여일보다_이전이면_에러를_반환한다() {
         LocalDateTime RentedAt = NOW.plusHours(3);
         LocalDateTime ScheduledReturnAt = NOW;
-        CreateRentalCommand command = CreateRentalCommand.of(RENTAL_ID, USER_ID, RENTAL_LINES, RentedAt, ScheduledReturnAt);
+        CreateRentalCommand command = CreateRentalCommand.of(USER_ID, RENTAL_LINES, RentedAt, ScheduledReturnAt);
 
         assertThatThrownBy(() -> Rental.create(command)).isInstanceOf(IllegalArgumentException.class);
     }

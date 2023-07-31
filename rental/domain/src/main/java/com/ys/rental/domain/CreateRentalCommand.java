@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 public class CreateRentalCommand extends SelfValidating<CreateProductCommand> {
 
     @Valid @NotNull
-    RentalId rentalId;
-    @Valid @NotNull
     UserId userId;
     @Valid @NotNull
     RentalLines rentalLines;
@@ -23,13 +21,11 @@ public class CreateRentalCommand extends SelfValidating<CreateProductCommand> {
     LocalDateTime scheduledReturnAt;
 
     private CreateRentalCommand(
-            RentalId rentalId,
             UserId userId,
             RentalLines rentalLines,
             LocalDateTime rentedAt,
             LocalDateTime scheduledReturnAt
     ) {
-        this.rentalId = rentalId;
         this.userId = userId;
         this.rentalLines = rentalLines;
         this.rentedAt = rentedAt;
