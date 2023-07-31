@@ -7,5 +7,5 @@ import lombok.Value;
 public class UserId {
 
     @NotNull
-    String id;
+    Integer id;
 }
