@@ -1,6 +1,6 @@
 rootProject.name = 'rabbit-mq'
 
-include 'infrastructure:message'
+include 'infrastructure'
 
 include 'event-store:domain'
 include 'event-store:application'
