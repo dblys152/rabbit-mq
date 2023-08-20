@@ -1,4 +1,4 @@
-package com.ys.eventstore.adapter.in;
+package com.ys.event_store.adapter.in;
 
 import com.ys.infrastructure.exception.BadRequestException;
 import com.ys.infrastructure.exception.UnauthorizedException;

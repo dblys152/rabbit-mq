@@ -1,4 +1,4 @@
-package com.ys.eventstore.adapter;
+package com.ys.event_store.adapter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.ys.rental")
+@ComponentScan(basePackages = "com.ys.event_store")
 @RestController
 public class EventStoreAdapterApplication {
 
