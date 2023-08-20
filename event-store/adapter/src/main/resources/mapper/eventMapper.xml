@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.ys.event_store.adapter.out.persistence.EventRepository">
+
+    <insert id="insert" parameterType="com.ys.event_store.domain.Event"
+            useGeneratedKeys="true" keyProperty="eventId">
+        INSERT INTO EVENT_HIST (
+            TYPE,
+            PAYLOAD,
+            OCCURRED_AT,
+            CREATED_AT
+        ) VALUES (
+            #{type},
+            #{payload},
+            #{occurredAt},
+            #{createdAt}
+        )
+    </insert>
+
+    <select id="selectAllByTypeAndOccurredAtBetween" parameterType="java.util.HashMap" resultType="com.ys.event_store.domain.Event">
+        SELECT  *
+        FROM    EVENT_HIST
+        WHERE   1 = 1
+        AND     TYPE = #{type,javaType=String}
+        AND     OCCURRED_AT BETWEEN #{startAt,javaType=java.time.LocalDateTime}
+                AND #{endAt,javaType=java.time.LocalDateTime}
+    </select>
+</mapper>
