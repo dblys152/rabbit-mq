@@ -36,8 +36,11 @@ configure(javaProjects) {
         implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
         implementation 'org.hibernate:hibernate-validator:7.0.5.Final'
         implementation 'org.glassfish:jakarta.el:4.0.2'
-        implementation 'com.fasterxml.uuid:java-uuid-generator:4.1.0'
         implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+        implementation 'com.fasterxml.uuid:java-uuid-generator:4.1.0'
+        implementation 'org.apache.commons:commons-lang3:3.13.0'
+        implementation 'commons-validator:commons-validator:1.7'
 
         if (!springBootProjects.contains(project)) {
             testImplementation(platform('org.junit:junit-bom:5.7.1'))
