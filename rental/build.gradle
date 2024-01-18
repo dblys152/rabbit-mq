@@ -6,6 +6,7 @@ plugins {
 }
 
 def javaProjects = [
+        project(":rental:refs:product"),
         project(":rental:refs:user"),
         project(":rental:domain"),
         project(":rental:application"),
@@ -41,6 +42,7 @@ configure(javaProjects) {
         implementation 'com.fasterxml.uuid:java-uuid-generator:4.1.0'
         implementation 'org.apache.commons:commons-lang3:3.13.0'
         implementation 'commons-validator:commons-validator:1.7'
+        implementation 'com.github.f4b6a3:tsid-creator:5.2.6'
 
         if (!springBootProjects.contains(project)) {
             testImplementation(platform('org.junit:junit-bom:5.7.1'))
