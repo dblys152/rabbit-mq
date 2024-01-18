@@ -1,11 +1,11 @@
-package com.ys.rental.refs.user.domain;
+package com.ys.rental.refs.product.domain;
 
 import com.ys.infrastructure.data.LongId;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 
 @Value(staticConstructor = "of")
-public class UserId implements LongId {
+public class ProductId implements LongId {
     @NotNull
     Long id;
 

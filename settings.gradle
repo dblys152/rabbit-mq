@@ -11,6 +11,7 @@ include 'product:domain'
 include 'product:application'
 include 'product:adapter'
 
+include 'rental:refs:product'
 include 'rental:refs:user'
 include 'rental:domain'
 include 'rental:application'
