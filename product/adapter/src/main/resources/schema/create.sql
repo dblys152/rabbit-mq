@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS PRODUCT_LIST
 (
-    PRODUCT_ID          VARCHAR(36)     PRIMARY KEY,
+    PRODUCT_ID          BIGINT          PRIMARY KEY,
     TYPE                VARCHAR(30) 	NOT NULL,
     CATEGORY_ID         VARCHAR(36)     NOT NULL,
     NAME                VARCHAR(30)     NOT NULL,
