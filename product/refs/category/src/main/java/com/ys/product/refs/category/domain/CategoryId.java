@@ -1,11 +1,16 @@
 package com.ys.product.refs.category.domain;
 
+import com.ys.infrastructure.data.IntegerId;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 
 @Value(staticConstructor = "of")
-public class CategoryId {
-
+public class CategoryId implements IntegerId {
     @NotNull
-    String id;
+    Integer id;
+
+    @Override
+    public Integer get() {
+        return this.id;
+    }
 }

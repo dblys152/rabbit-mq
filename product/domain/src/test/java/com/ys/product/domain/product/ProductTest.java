@@ -1,6 +1,7 @@
 package com.ys.product.domain.product;
 
 import com.ys.product.domain.product.fixture.SupportProductFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,12 +9,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProductTest extends SupportProductFixture {
+    private Product saleProduct;
+    private Product rentalProduct;
+
+    @BeforeEach
+    void setUp() {
+        saleProduct = Product.of(
+                PRODUCT_ID, ProductType.SALE_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.SALE_AVAILABLE, NOW, NOW, null, 0L);
+        rentalProduct = Product.of(
+                PRODUCT_ID2, ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_AVAILABLE, NOW, NOW, null, 0L);
+    }
 
     @Test
     void 상품을_등록한다() {
-        CreateProductCommand command = CREATE_PRODUCT_COMMAND;
+        CreateProductCommand command = CreateProductCommand.of(
+                ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_AVAILABLE);
 
-        Product actual = Product.create(command);
+        Product actual = Product.create(PRODUCT_ID, command);
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
@@ -31,54 +43,52 @@ class ProductTest extends SupportProductFixture {
         CreateProductCommand command = CreateProductCommand.of(
                 ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.SALE_AVAILABLE);
 
-        assertThatThrownBy(() -> Product.create(command)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Product.create(PRODUCT_ID, command)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품을_수정한다() {
-        Product product = RENTAL_PRODUCT;
-        ChangeProductCommand command = CHANGE_PRODUCT_COMMAND;
-        product.change(command);
+        ChangeProductCommand command = ChangeProductCommand.of(
+                CATEGORY_ID, PRODUCT_NAME, MONEY_2000, ProductStatus.SALE_AVAILABLE);
+
+        saleProduct.change(command);
 
         assertAll(
-                () -> assertThat(product.getCategoryId()).isEqualTo(command.getCategoryId()),
-                () -> assertThat(product.getName()).isEqualTo(command.getName()),
-                () -> assertThat(product.getPrice()).isEqualTo(command.getPrice()),
-                () -> assertThat(product.getStatus()).isEqualTo(command.getStatus())
+                () -> assertThat(saleProduct.getCategoryId()).isEqualTo(command.getCategoryId()),
+                () -> assertThat(saleProduct.getName()).isEqualTo(command.getName()),
+                () -> assertThat(saleProduct.getPrice()).isEqualTo(command.getPrice()),
+                () -> assertThat(saleProduct.getStatus()).isEqualTo(command.getStatus())
         );
     }
 
     @Test
     void 상품_수정_시_상품_유형에_맞는_상태가_아니면_에러를_반환한다() {
-        Product product = RENTAL_PRODUCT;
         ChangeProductCommand command = ChangeProductCommand.of(
-                CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.SALE_AVAILABLE);
+                CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_STOPPED);
 
-        assertThatThrownBy(() -> product.change(command)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> saleProduct.change(command)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품을_삭제한다() {
-        Product product = RENTAL_PRODUCT;
-        product.delete();
+        saleProduct.delete();
 
-        assertThat(product.getDeletedAt()).isNotNull();
+        assertThat(saleProduct.getDeletedAt()).isNotNull();
     }
 
     @Test
     void 상품_상태를_변경한다() {
-        Product product = RENTAL_PRODUCT;
-        ChangeStatusCommand command = ChangeStatusCommand.of(ProductStatus.UNDER_REPAIR);
-        product.changeStatus(command);
+        ChangeProductStatusCommand command = ChangeProductStatusCommand.of(ProductStatus.UNDER_REPAIR);
 
-        assertThat(product.getStatus()).isEqualTo(command.getStatus());
+        rentalProduct.changeStatus(command);
+
+        assertThat(rentalProduct.getStatus()).isEqualTo(command.getStatus());
     }
 
     @Test
     void 상태_변경_시_상품_유형에_맞는_상태가_아니면_에러를_반환한다() {
-        Product product = RENTAL_PRODUCT;
-        ChangeStatusCommand command = ChangeStatusCommand.of(ProductStatus.SALE_AVAILABLE);
+        ChangeProductStatusCommand command = ChangeProductStatusCommand.of(ProductStatus.SALE_AVAILABLE);
 
-        assertThatThrownBy(() -> product.changeStatus(command)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> rentalProduct.changeStatus(command)).isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -3,7 +3,6 @@ package com.ys.product.domain.product;
 import java.util.Set;
 
 public enum ProductStatus {
-
     SALE_AVAILABLE("판매 가능"),
     SALE_STOPPED("판매 중단"),
 
@@ -20,7 +19,7 @@ public enum ProductStatus {
 
     final String description;
 
-    ProductStatus(String description) {
+    ProductStatus(final String description) {
         this.description = description;
     }
 }

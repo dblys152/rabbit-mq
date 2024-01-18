@@ -1,50 +1,63 @@
 package com.ys.product.domain.product;
 
-import com.fasterxml.uuid.Generators;
 import com.ys.product.refs.category.domain.CategoryId;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "PRODUCT_LIST")
+@Entity
+@Table(name = "PRODUCT_LIST")
+@EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @ToString
 public class Product extends AbstractAggregateRoot<Product> {
-
-    private static final LocalDateTime NOW = LocalDateTime.now();
-
     @EmbeddedId
     @Column(name = "PRODUCT_ID")
+    @NotNull
     private ProductId productId;
 
     @Column(name = "TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private ProductType type;
 
     @Column(name = "CATEGORY_ID", nullable = false)
+    @NotNull
     private CategoryId categoryId;
 
     @Column(name = "NAME", nullable = false)
+    @NotNull
+    @Size(min = 1, max = 40)
     private String name;
 
     @Column(name = "PRICE", nullable = false)
+    @NotNull
     private Money price;
 
     @Column(name = "STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
+    @NotNull
     private ProductStatus status;
 
     @Column(name = "CREATED_AT", nullable = false)
-    private LocalDateTime createdAt = NOW;
+    @NotNull
+    private LocalDateTime createdAt;
+
     @Column(name = "MODIFIED_AT", nullable = false)
-    private LocalDateTime modifiedAt = NOW;
+    @NotNull
+    private LocalDateTime modifiedAt;
+
     @Column(name = "DELETED_AT")
     private LocalDateTime deletedAt;
+
     @Version
     @Column(name = "VERSION")
     private Long version;
@@ -53,26 +66,48 @@ public class Product extends AbstractAggregateRoot<Product> {
         return new Product(productId, type, categoryId, name, price, status, createdAt, modifiedAt, deletedAt, version);
     }
 
-    public Product(ProductId productId, ProductType type, CategoryId categoryId, String name, Money price, ProductStatus status) {
+    public Product(ProductId productId, ProductType type, CategoryId categoryId, String name, Money price, ProductStatus status, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.productId = productId;
         this.type = type;
         this.categoryId = categoryId;
         this.name = name;
         this.price = price;
         this.status = status;
-        validationStatus();
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+        validateStatus();
     }
 
-    public static Product create(CreateProductCommand command) {
-        ProductId productId = ProductId.of(Generators.timeBasedEpochGenerator().generate().toString());
+    public static Product create(ProductId productId, CreateProductCommand command) {
+        LocalDateTime now = LocalDateTime.now();
         return new Product(
                 productId,
                 command.getType(),
                 command.getCategoryId(),
                 command.getName(),
                 command.getPrice(),
-                command.getStatus()
+                command.getStatus(),
+                now,
+                now
         );
+    }
+
+    private void validateStatus() {
+        if (isInvalidSaleProductStatus()) {
+            throw new IllegalArgumentException("판매 상품의 상태 값이 아닙니다.");
+        } else if (isInvalidRentalProductStatus()) {
+            throw new IllegalArgumentException("대여 상품의 상태 값이 아닙니다.");
+        }
+    }
+
+    private boolean isInvalidSaleProductStatus() {
+        return this.type == ProductType.SALE_PRODUCT
+                && !ProductStatus.SALE_STATUSES.contains(status);
+    }
+
+    private boolean isInvalidRentalProductStatus() {
+        return this.type == ProductType.RENTAL_PRODUCT
+                && !ProductStatus.RENTAL_STATUSES.contains(status);
     }
 
     public void change(ChangeProductCommand command) {
@@ -80,26 +115,16 @@ public class Product extends AbstractAggregateRoot<Product> {
         this.name = command.getName();
         this.price = command.getPrice();
         this.status = command.getStatus();
-        this.modifiedAt = NOW;
-        validationStatus();
+        this.modifiedAt = LocalDateTime.now();
+        validateStatus();
+    }
+
+    public void changeStatus(ChangeProductStatusCommand command) {
+        this.status = command.getStatus();
+        validateStatus();
     }
 
     public void delete() {
-        this.deletedAt = NOW;
-    }
-
-    public void changeStatus(ChangeStatusCommand command) {
-        this.status = command.getStatus();
-        validationStatus();
-    }
-
-    private void validationStatus() {
-        if(this.type == ProductType.SALE_PRODUCT
-                && !ProductStatus.SALE_STATUSES.contains(status)) {
-            throw new IllegalArgumentException("판매 상품의 상태값이 아닙니다.");
-        } else if(this.type == ProductType.RENTAL_PRODUCT
-                && !ProductStatus.RENTAL_STATUSES.contains(status)) {
-            throw new IllegalArgumentException("대여 상품의 상태값이 아닙니다.");
-        }
+        this.deletedAt = LocalDateTime.now();
     }
 }

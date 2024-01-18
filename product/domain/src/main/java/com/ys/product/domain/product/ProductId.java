@@ -1,12 +1,16 @@
 package com.ys.product.domain.product;
 
-import jakarta.persistence.Embeddable;
+import com.ys.infrastructure.data.LongId;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Value(staticConstructor = "of")
-public class ProductId {
-
+public class ProductId implements LongId {
     @NotNull
-    String id;
+    Long id;
+
+    @Override
+    public Long get() {
+        return this.id;
+    }
 }
