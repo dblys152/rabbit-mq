@@ -75,7 +75,7 @@
 				</encoder>
 			</appender>
 
-			<logger name="com.ys.event_store" level="DEBUG">
+			<logger name="com.ys.product" level="DEBUG">
 				<appender-ref ref="IpControlFile" />
 			</logger>
 		</springProfile>
