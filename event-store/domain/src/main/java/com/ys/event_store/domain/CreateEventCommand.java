@@ -3,30 +3,31 @@ package com.ys.event_store.domain;
 import com.ys.infrastructure.utils.SelfValidating;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@EqualsAndHashCode(callSuper = true)
-@Value(staticConstructor = "of")
+@Getter
 public class CreateEventCommand extends SelfValidating<CreateEventCommand> {
-
     @NotNull
     @Size(min = 1, max = 100)
     String type;
 
     @NotNull
-    Map<String, Object> payload;
+    private Map<String, Object> payload;
+
+    @Size(min = 1, max = 39)
+    private String publisherId;
 
     @NotNull
-    LocalDateTime occurredAt;
+    private LocalDateTime publishedAt;
 
-    public CreateEventCommand(String type, Map<String, Object> payload, LocalDateTime occurredAt) {
+    public CreateEventCommand(String type, Map<String, Object> payload, String publisherId, LocalDateTime publishedAt) {
         this.type = type;
         this.payload = payload;
-        this.occurredAt = occurredAt;
+        this.publisherId = publisherId;
+        this.publishedAt = publishedAt;
         validateSelf();
     }
 }

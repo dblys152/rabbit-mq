@@ -2,28 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.ys.event_store.adapter.out.persistence.EventRepository">
-
-    <insert id="insert" parameterType="com.ys.event_store.domain.Event"
-            useGeneratedKeys="true" keyProperty="eventId">
+    <insert id="insert" parameterType="com.ys.event_store.domain.Event">
         INSERT INTO EVENT_HIST (
+            EVENT_ID,
             TYPE,
             PAYLOAD,
-            OCCURRED_AT,
-            CREATED_AT
+            PUBLISHER_ID,
+            PUBLISHED_AT,
+            OCCURRED_AT
         ) VALUES (
+            #{eventId.id},
             #{type},
-            #{payload},
-            #{occurredAt},
-            #{createdAt}
+            CAST(#{payload, typeHandler=com.ys.event_store.adapter.out.persistence.converter.MapTypeHandler} AS JSON),
+            #{publisherId},
+            #{publishedAt},
+            #{occurredAt}
         )
     </insert>
 
-    <select id="selectAllByTypeAndOccurredAtBetween" parameterType="java.util.HashMap" resultType="com.ys.event_store.domain.Event">
+    <resultMap id="eventResultMap" type="com.ys.event_store.domain.Event">
+        <id property="eventId.id" column="EVENT_ID"/>
+        <result property="type" column="TYPE"/>
+        <result property="payload" column="PAYLOAD" typeHandler="com.ys.event_store.adapter.out.persistence.converter.MapTypeHandler"/>
+        <result property="occurredAt" column="OCCURRED_AT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+
+    <select id="selectAllByTypeAndPublishedAtBetween" parameterType="java.util.HashMap" resultMap="eventResultMap">
         SELECT  *
         FROM    EVENT_HIST
         WHERE   1 = 1
         AND     TYPE = #{type,javaType=String}
-        AND     OCCURRED_AT BETWEEN #{startAt,javaType=java.time.LocalDateTime}
+        AND     PUBLISHED_AT BETWEEN #{startAt,javaType=java.time.LocalDateTime}
                 AND #{endAt,javaType=java.time.LocalDateTime}
     </select>
 </mapper>

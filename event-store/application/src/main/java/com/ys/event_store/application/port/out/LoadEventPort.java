@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 
 public interface LoadEventPort {
 
-    Events selectAllByTypeAndOccurredAtBetween(String type, LocalDateTime startAt, LocalDateTime endAt);
+    Events selectAllByTypeAndPublishedAtBetween(String type, LocalDateTime startAt, LocalDateTime endAt);
 }

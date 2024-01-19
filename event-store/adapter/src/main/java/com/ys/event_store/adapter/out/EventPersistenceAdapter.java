@@ -25,13 +25,13 @@ public class EventPersistenceAdapter implements RecordEventPort, LoadEventPort {
     }
 
     @Override
-    public Events selectAllByTypeAndOccurredAtBetween(String type, LocalDateTime startAt, LocalDateTime endAt) {
+    public Events selectAllByTypeAndPublishedAtBetween(String type, LocalDateTime startAt, LocalDateTime endAt) {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("type", type);
         parameterMap.put("startAt", startAt);
         parameterMap.put("endAt", endAt);
 
-        List<Event> entityList = repository.selectAllByTypeAndOccurredAtBetween(parameterMap);
+        List<Event> entityList = repository.selectAllByTypeAndPublishedAtBetween(parameterMap);
 
         return Events.of(entityList);
     }

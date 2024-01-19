@@ -1,7 +1,5 @@
 package com.ys.event_store.adapter.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ys.event_store.adapter.out.persistence.converter.MapTypeHandler;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -22,9 +20,6 @@ import javax.sql.DataSource;
 @MapperScan(value = "com.ys.event_store.adapter.out.persistence")
 @RequiredArgsConstructor
 public class MybatisConfig {
-
-    private final ObjectMapper objectMapper;
-
     @Value("${spring.datasource.url}")
     private String url;
 
@@ -60,8 +55,7 @@ public class MybatisConfig {
                 .getResources("classpath:mapper/*.xml"));
 
         sessionFactory.setTypeHandlers(
-                new LocalDateTimeTypeHandler(),
-                new MapTypeHandler(objectMapper)
+                new LocalDateTimeTypeHandler()
         );
 
         return sessionFactory.getObject();

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Transactional(readOnly = true)
@@ -18,7 +17,7 @@ public class EventQueryService implements GetEventQuery {
     private final LoadEventPort loadEventPort;
 
     @Override
-    public Events getAllByTypeAndOccurredAtBetween(String type, LocalDateTime startAt, LocalDateTime endAt) {
-        return loadEventPort.selectAllByTypeAndOccurredAtBetween(type, startAt, endAt);
+    public Events getAllByTypeAndPublishedAtBetween(String type, LocalDateTime startAt, LocalDateTime endAt) {
+        return loadEventPort.selectAllByTypeAndPublishedAtBetween(type, startAt, endAt);
     }
 }

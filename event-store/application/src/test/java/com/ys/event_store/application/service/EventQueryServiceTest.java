@@ -33,14 +33,14 @@ class EventQueryServiceTest {
 
     @Test
     void 특정_타입과_기간으로_이벤트_목록을_조회한다() {
-        given(loadEventPort.selectAllByTypeAndOccurredAtBetween(ANY_TYPE, START_AT, END_AT))
+        given(loadEventPort.selectAllByTypeAndPublishedAtBetween(ANY_TYPE, START_AT, END_AT))
                 .willReturn(mock(Events.class));
 
-        Events actual = sut.getAllByTypeAndOccurredAtBetween(ANY_TYPE, START_AT, END_AT);
+        Events actual = sut.getAllByTypeAndPublishedAtBetween(ANY_TYPE, START_AT, END_AT);
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> then(loadEventPort).should().selectAllByTypeAndOccurredAtBetween(ANY_TYPE, START_AT, END_AT)
+                () -> then(loadEventPort).should().selectAllByTypeAndPublishedAtBetween(ANY_TYPE, START_AT, END_AT)
         );
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 
 @Value(staticConstructor = "of")
 public class Events {
-
     @Valid
     @NotNull
     List<Event> items;

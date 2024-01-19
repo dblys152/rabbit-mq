@@ -13,9 +13,8 @@ import java.util.Map;
 @Getter
 @ToString
 public class Event {
-
     @NotNull
-    private Long eventId;
+    private EventId eventId;
 
     @NotNull
     @Size(min = 1, max = 100)
@@ -24,28 +23,33 @@ public class Event {
     @NotNull
     private Map<String, Object> payload;
 
+    @Size(min = 1, max = 39)
+    private String publisherId;
+
+    @NotNull
+    private LocalDateTime publishedAt;
+
     @NotNull
     private LocalDateTime occurredAt;
 
-    @NotNull
-    private LocalDateTime createdAt;
-
     public static Event of(
-            Long eventId,
+            EventId eventId,
             String type,
             Map<String, Object> payload,
-            LocalDateTime occurredAt,
-            LocalDateTime createdAt
+            String publisherId,
+            LocalDateTime publishedAt,
+            LocalDateTime occurredAt
     ) {
-        return new Event(eventId, type, payload, occurredAt, createdAt);
+        return new Event(eventId, type, payload, publisherId, publishedAt, occurredAt);
     }
 
-    public static Event create(CreateEventCommand command) {
+    public static Event create(EventId eventId, CreateEventCommand command) {
         return new Event(
-                null,
+                eventId,
                 command.getType(),
                 command.getPayload(),
-                command.getOccurredAt(),
+                command.getPublisherId(),
+                command.getPublishedAt(),
                 LocalDateTime.now()
         );
     }

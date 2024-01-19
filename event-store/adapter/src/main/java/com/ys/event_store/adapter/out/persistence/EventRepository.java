@@ -12,5 +12,5 @@ public interface EventRepository {
 
     void insert(Event event);
 
-    List<Event> selectAllByTypeAndOccurredAtBetween(Map<String, Object> parameterType);
+    List<Event> selectAllByTypeAndPublishedAtBetween(Map<String, Object> parameterType);
 }

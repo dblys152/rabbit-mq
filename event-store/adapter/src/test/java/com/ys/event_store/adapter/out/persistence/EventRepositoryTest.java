@@ -4,6 +4,8 @@ import com.ys.event_store.adapter.config.MybatisConfig;
 import com.ys.event_store.adapter.config.ObjectMapperConfig;
 import com.ys.event_store.domain.CreateEventCommand;
 import com.ys.event_store.domain.Event;
+import com.ys.event_store.domain.EventId;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,30 +26,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = {MybatisConfig.class, ObjectMapperConfig.class})
 class EventRepositoryTest {
-
-    private static final String ANY_TYPE = "PRODUCT_RENTED_EVENT";
-    private static final LocalDateTime OCCURRED_AT = LocalDateTime.now();
-    private static final LocalDate NOW_DATE = LocalDate.now();
+    private static final LocalDateTime NOW = LocalDateTime.now();
+    private static final EventId EVENT_ID = EventId.of(999999999L);
+    private static final String ANY_TYPE = "PRODUCT_CREATED_EVENT";
+    private static final String ANY_PUBLISHER_ID = "1";
+    private static final LocalDate NOW_DATE = NOW.toLocalDate();
     private static final LocalDateTime START_AT = NOW_DATE.atStartOfDay();
     private static final LocalDateTime END_AT = NOW_DATE.atTime(23, 59, 59, 999);
 
     @Autowired
     private EventRepository repository;
 
+    private Event event;
+
+    @BeforeEach
+    void setUp() {
+        CreateEventCommand command = new CreateEventCommand(ANY_TYPE, getAnyPayload(), ANY_PUBLISHER_ID, NOW);
+        event = Event.create(EVENT_ID, command);
+    }
+
     @Test
     void insert() {
-        CreateEventCommand command = CreateEventCommand.of(ANY_TYPE, getAnyPayload(), OCCURRED_AT);
-        Event event = Event.create(command);
-
         repository.insert(event);
-
-        assertThat(event.getEventId()).isNotNull();
     }
 
     @Test
     void selectAllByTypeAndOccurredAtBetween() {
-        CreateEventCommand command = CreateEventCommand.of(ANY_TYPE, getAnyPayload(), OCCURRED_AT);
-        Event event = Event.create(command);
         repository.insert(event);
 
         Map<String, Object> parameterMap = new HashMap<>();
@@ -55,9 +59,9 @@ class EventRepositoryTest {
         parameterMap.put("startAt", START_AT);
         parameterMap.put("endAt", END_AT);
 
-        List<Event> actual = repository.selectAllByTypeAndOccurredAtBetween(parameterMap);
+        List<Event> actual = repository.selectAllByTypeAndPublishedAtBetween(parameterMap);
 
-        assertThat(actual).isNotNull();
+        assertThat(actual).isNotEmpty();
     }
 
     private Map<String, Object> getAnyPayload() {

@@ -1,11 +1,11 @@
 package com.ys.event_store.adapter.in;
 
-import com.ys.event_store.application.port.in.CreateEventUseCase;
 import com.ys.event_store.adapter.in.model.EventModel;
+import com.ys.event_store.application.port.in.CreateEventUseCase;
 import com.ys.event_store.domain.CreateEventCommand;
 import com.ys.event_store.domain.Event;
 import com.ys.infrastructure.message.DomainEvent;
-import com.ys.infrastructure.utils.ApiResponse;
+import com.ys.infrastructure.utils.ApiResponseModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,12 +28,11 @@ public class EventCommandController {
     private final CreateEventUseCase createEventUseCase;
 
     @PostMapping("")
-    public ResponseEntity create(@Valid @RequestBody DomainEvent<Map<String, Object>> domainEvent) {
+    public ResponseEntity<ApiResponseModel<EventModel>> create(@Valid @RequestBody DomainEvent<Map<String, Object>> domainEvent) {
+        Event event = createEventUseCase.create(new CreateEventCommand(
+                domainEvent.getType(), domainEvent.getPayload(), domainEvent.getPublisherId(), domainEvent.getPublishedAt()));
 
-        Event event = createEventUseCase.create(CreateEventCommand.of(
-                domainEvent.getType(), domainEvent.getPayload(), domainEvent.getOccurredAt()));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseModel.success(
                 HttpStatus.CREATED.value(), EventModel.fromDomain(event)));
     }
 }

@@ -9,15 +9,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class EventModel {
-
-    String eventId;
+    Long eventId;
     String type;
     Object payload;
     LocalDateTime occurredAt;
 
     public static EventModel fromDomain(Event event) {
         return new EventModel(
-                String.valueOf(event.getEventId()),
+                event.getEventId().get(),
                 event.getType(),
                 event.getPayload(),
                 event.getOccurredAt()

@@ -10,21 +10,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventTest {
-
+    private static final EventId EVENT_ID = EventId.of(999999999L);
     private static final String ANY_TYPE = "PRODUCT_RENTED_EVENT";
-    private static final LocalDateTime OCCURRED_AT = LocalDateTime.now();
+    private static final String ANY_PUBLISHER_ID = "SYSTEM";
+    private static final LocalDateTime NOW = LocalDateTime.now();
 
     @Test
     void 이벤트를_생성한다() {
-        CreateEventCommand command = CreateEventCommand.of(ANY_TYPE, getAnyPayload(), OCCURRED_AT);
+        CreateEventCommand command = new CreateEventCommand(ANY_TYPE, getAnyPayload(), ANY_PUBLISHER_ID, NOW);
 
-        Event actual = Event.create(command);
+        Event actual = Event.create(EVENT_ID, command);
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getType()).isEqualTo(command.getType()),
                 () -> assertThat(actual.getPayload()).isEqualTo(command.getPayload()),
-                () -> assertThat(actual.getOccurredAt()).isEqualTo(command.getOccurredAt())
+                () -> assertThat(actual.getPublisherId()).isEqualTo(command.getPublisherId()),
+                () -> assertThat(actual.getPublishedAt()).isEqualTo(command.getPublishedAt()),
+                () -> assertThat(actual.getOccurredAt()).isNotNull()
         );
     }
 

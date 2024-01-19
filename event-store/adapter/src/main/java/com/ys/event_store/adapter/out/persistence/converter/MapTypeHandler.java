@@ -1,11 +1,13 @@
 package com.ys.event_store.adapter.out.persistence.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -14,10 +16,16 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiredArgsConstructor
+@MappedTypes(Map.class)
 public class MapTypeHandler extends BaseTypeHandler<Map<String, Object>> {
-
     private final ObjectMapper objectMapper;
+
+    public MapTypeHandler() {
+        this.objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Map<String, Object> parameter, JdbcType jdbcType) throws SQLException {
@@ -50,7 +58,7 @@ public class MapTypeHandler extends BaseTypeHandler<Map<String, Object>> {
         }
 
         try {
-            return objectMapper.readValue(value.toString(), HashMap.class);
+            return objectMapper.readValue(value, HashMap.class);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error parsing Map data", e);
         }
