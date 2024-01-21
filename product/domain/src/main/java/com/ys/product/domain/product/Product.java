@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "PRODUCT_LIST")
+@Table(name = "PRODUCTS")
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
