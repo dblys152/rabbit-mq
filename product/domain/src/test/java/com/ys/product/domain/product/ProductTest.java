@@ -15,15 +15,15 @@ class ProductTest extends SupportProductFixture {
     @BeforeEach
     void setUp() {
         saleProduct = Product.of(
-                PRODUCT_ID, ProductType.SALE_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.SALE_AVAILABLE, NOW, NOW, null, 0L);
+                PRODUCT_ID, ProductType.SALE_PRODUCT, ProductStatus.SALE_AVAILABLE, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, NOW, NOW, null, 0L);
         rentalProduct = Product.of(
-                PRODUCT_ID2, ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_AVAILABLE, NOW, NOW, null, 0L);
+                PRODUCT_ID2, ProductType.RENTAL_PRODUCT, ProductStatus.RENTAL_AVAILABLE, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, NOW, NOW, null, 0L);
     }
 
     @Test
     void 상품을_등록한다() {
-        CreateProductCommand command = CreateProductCommand.of(
-                ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_AVAILABLE);
+        CreateProductCommand command = new CreateProductCommand(
+                ProductType.RENTAL_PRODUCT, ProductStatus.RENTAL_AVAILABLE, CATEGORY_ID, PRODUCT_NAME, MONEY_1000);
 
         Product actual = Product.create(PRODUCT_ID, command);
 
@@ -40,16 +40,16 @@ class ProductTest extends SupportProductFixture {
 
     @Test
     void 상품_등록_시_상품_유형에_맞는_상태가_아니면_에러를_반환한다() {
-        CreateProductCommand command = CreateProductCommand.of(
-                ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.SALE_AVAILABLE);
+        CreateProductCommand command = new CreateProductCommand(
+                ProductType.RENTAL_PRODUCT, ProductStatus.SALE_AVAILABLE, CATEGORY_ID, PRODUCT_NAME, MONEY_1000);
 
         assertThatThrownBy(() -> Product.create(PRODUCT_ID, command)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품을_수정한다() {
-        ChangeProductCommand command = ChangeProductCommand.of(
-                CATEGORY_ID, PRODUCT_NAME, MONEY_2000, ProductStatus.SALE_AVAILABLE);
+        ChangeProductCommand command = new ChangeProductCommand(
+                ProductStatus.SALE_AVAILABLE, CATEGORY_ID, PRODUCT_NAME, MONEY_2000);
 
         saleProduct.change(command);
 
@@ -63,8 +63,8 @@ class ProductTest extends SupportProductFixture {
 
     @Test
     void 상품_수정_시_상품_유형에_맞는_상태가_아니면_에러를_반환한다() {
-        ChangeProductCommand command = ChangeProductCommand.of(
-                CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_STOPPED);
+        ChangeProductCommand command = new ChangeProductCommand(
+                ProductStatus.RENTAL_STOPPED, CATEGORY_ID, PRODUCT_NAME, MONEY_1000);
 
         assertThatThrownBy(() -> saleProduct.change(command)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -78,7 +78,7 @@ class ProductTest extends SupportProductFixture {
 
     @Test
     void 상품_상태를_변경한다() {
-        ChangeProductStatusCommand command = ChangeProductStatusCommand.of(ProductStatus.UNDER_REPAIR);
+        ChangeProductStatusCommand command = new ChangeProductStatusCommand(ProductStatus.UNDER_REPAIR);
 
         rentalProduct.changeStatus(command);
 
@@ -87,7 +87,7 @@ class ProductTest extends SupportProductFixture {
 
     @Test
     void 상태_변경_시_상품_유형에_맞는_상태가_아니면_에러를_반환한다() {
-        ChangeProductStatusCommand command = ChangeProductStatusCommand.of(ProductStatus.SALE_AVAILABLE);
+        ChangeProductStatusCommand command = new ChangeProductStatusCommand(ProductStatus.SALE_AVAILABLE);
 
         assertThatThrownBy(() -> rentalProduct.changeStatus(command)).isInstanceOf(IllegalArgumentException.class);
     }

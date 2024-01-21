@@ -5,29 +5,29 @@ import com.ys.product.refs.category.domain.CategoryId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Value;
+import lombok.Getter;
 
-@Value(staticConstructor = "of")
+@Getter
 public class ChangeProductCommand extends SelfValidating<ChangeProductCommand> {
+    @NotNull
+    private ProductStatus status;
+
     @Valid
     @NotNull
-    CategoryId categoryId;
+    private CategoryId categoryId;
 
     @NotNull
     @Size(min = 1, max = 40)
-    String name;
+    private String name;
 
     @NotNull
-    Money price;
+    private Money price;
 
-    @NotNull
-    ProductStatus status;
-
-    private ChangeProductCommand(CategoryId categoryId, String name, Money price, ProductStatus status) {
+    public ChangeProductCommand(ProductStatus status, CategoryId categoryId, String name, Money price) {
+        this.status = status;
         this.categoryId = categoryId;
         this.name = name;
         this.price = price;
-        this.status = status;
         validateSelf();
     }
 }

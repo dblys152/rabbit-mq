@@ -29,6 +29,11 @@ public class Product extends AbstractAggregateRoot<Product> {
     @NotNull
     private ProductType type;
 
+    @Column(name = "STATUS", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ProductStatus status;
+
     @Column(name = "CATEGORY_ID", nullable = false)
     @NotNull
     private CategoryId categoryId;
@@ -41,11 +46,6 @@ public class Product extends AbstractAggregateRoot<Product> {
     @Column(name = "PRICE", nullable = false)
     @NotNull
     private Money price;
-
-    @Column(name = "STATUS", nullable = false)
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private ProductStatus status;
 
     @Column(name = "CREATED_AT", nullable = false)
     @NotNull
@@ -62,17 +62,17 @@ public class Product extends AbstractAggregateRoot<Product> {
     @Column(name = "VERSION")
     private Long version;
 
-    public static Product of(ProductId productId, ProductType type, CategoryId categoryId, String name, Money price, ProductStatus status, LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime deletedAt, Long version) {
-        return new Product(productId, type, categoryId, name, price, status, createdAt, modifiedAt, deletedAt, version);
+    public static Product of(ProductId productId, ProductType type, ProductStatus status, CategoryId categoryId, String name, Money price, LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime deletedAt, Long version) {
+        return new Product(productId, type, status, categoryId, name, price, createdAt, modifiedAt, deletedAt, version);
     }
 
-    public Product(ProductId productId, ProductType type, CategoryId categoryId, String name, Money price, ProductStatus status, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public Product(ProductId productId, ProductType type, ProductStatus status, CategoryId categoryId, String name, Money price, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.productId = productId;
         this.type = type;
+        this.status = status;
         this.categoryId = categoryId;
         this.name = name;
         this.price = price;
-        this.status = status;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
         validateStatus();
@@ -83,10 +83,10 @@ public class Product extends AbstractAggregateRoot<Product> {
         return new Product(
                 productId,
                 command.getType(),
+                command.getStatus(),
                 command.getCategoryId(),
                 command.getName(),
                 command.getPrice(),
-                command.getStatus(),
                 now,
                 now
         );
@@ -111,10 +111,10 @@ public class Product extends AbstractAggregateRoot<Product> {
     }
 
     public void change(ChangeProductCommand command) {
+        this.status = command.getStatus();
         this.categoryId = command.getCategoryId();
         this.name = command.getName();
         this.price = command.getPrice();
-        this.status = command.getStatus();
         this.modifiedAt = LocalDateTime.now();
         validateStatus();
     }

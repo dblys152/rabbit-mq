@@ -2,14 +2,14 @@ package com.ys.product.domain.product;
 
 import com.ys.infrastructure.utils.SelfValidating;
 import jakarta.validation.constraints.NotNull;
-import lombok.Value;
+import lombok.Getter;
 
-@Value(staticConstructor = "of")
+@Getter
 public class ChangeProductStatusCommand extends SelfValidating<ChangeProductStatusCommand> {
     @NotNull
-    ProductStatus status;
+    private ProductStatus status;
 
-    private ChangeProductStatusCommand(ProductStatus status) {
+    public ChangeProductStatusCommand(ProductStatus status) {
         this.status = status;
         validateSelf();
     }

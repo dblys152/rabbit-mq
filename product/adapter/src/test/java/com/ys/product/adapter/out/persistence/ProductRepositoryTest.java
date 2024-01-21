@@ -27,8 +27,8 @@ class ProductRepositoryTest extends SupportProductFixture {
 
     @Test
     void save() {
-        CreateProductCommand command = CreateProductCommand.of(
-                ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_AVAILABLE);
+        CreateProductCommand command = new CreateProductCommand(
+                ProductType.RENTAL_PRODUCT, ProductStatus.RENTAL_AVAILABLE, CATEGORY_ID, PRODUCT_NAME, MONEY_1000);
         Product product = Product.create(PRODUCT_ID, command);
 
         Product actual = repository.save(product);
@@ -38,8 +38,8 @@ class ProductRepositoryTest extends SupportProductFixture {
 
     @Test
     void findById() {
-        CreateProductCommand command = CreateProductCommand.of(
-                ProductType.RENTAL_PRODUCT, CATEGORY_ID, PRODUCT_NAME, MONEY_1000, ProductStatus.RENTAL_AVAILABLE);
+        CreateProductCommand command = new CreateProductCommand(
+                ProductType.RENTAL_PRODUCT, ProductStatus.RENTAL_AVAILABLE, CATEGORY_ID, PRODUCT_NAME, MONEY_1000);
         Product product = Product.create(PRODUCT_ID, command);
         Product savedProduct = repository.save(product);
 
