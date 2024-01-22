@@ -6,10 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class RentalLinesTest extends SupportRentalFixture {
-
     @Test
     void 대여_상품을_중복해서_넣으면_에러를_반환한다() {
         RentalLine rentalLine = RentalLine.create(PRODUCT_ID, MONEY_1000, QUANTITY_ONE);

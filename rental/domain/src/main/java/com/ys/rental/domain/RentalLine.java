@@ -1,7 +1,6 @@
 package com.ys.rental.domain;
 
-import com.ys.product.domain.product.ProductId;
-import jakarta.persistence.*;
+import com.ys.rental.refs.product.domain.ProductId;
 import lombok.*;
 
 @EqualsAndHashCode
@@ -10,9 +9,6 @@ import lombok.*;
 @Getter
 @ToString
 public class RentalLine {
-
-    private static final int ZERO = 0;
-
     private ProductId productId;
     private Money price;
     private int quantity;
@@ -31,7 +27,7 @@ public class RentalLine {
     }
 
     private void validation() {
-        if (this.quantity <= ZERO) {
+        if (this.quantity <= 0) {
             throw new IllegalArgumentException("수량은 한 개 이상이어야 합니다.");
         }
     }

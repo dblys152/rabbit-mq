@@ -1,6 +1,8 @@
 package com.ys.rental.domain;
 
 import com.ys.rental.refs.user.domain.UserId;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,19 +14,31 @@ import java.util.List;
 @Getter
 @ToString
 public class Rental {
-
-    private static final LocalDateTime NOW = LocalDateTime.now();
-
+    @NotNull
     private RentalId rentalId;
+
+    @NotNull
     private UserId userId;
+
+    @NotNull
     private RentalStatus status;
+
+    @Valid
+    @NotNull
     private RentalLines rentalLines;
-    private LocalDateTime rentedAt;
-    private LocalDateTime scheduledReturnAt;
+
+    @Valid
+    @NotNull
+    private RentalPeriod rentalPeriod;
+
     private LocalDateTime returnedAt;
 
+    @NotNull
     private LocalDateTime createdAt;
+
+    @NotNull
     private LocalDateTime modifiedAt;
+
     private Long version;
 
     public static Rental of(
@@ -32,38 +46,36 @@ public class Rental {
             UserId userId,
             RentalStatus status,
             RentalLines rentalLines,
-            LocalDateTime rentedAt,
-            LocalDateTime scheduledReturnAt,
+            RentalPeriod rentalPeriod,
             LocalDateTime returnedAt,
             LocalDateTime createdAt,
             LocalDateTime modifiedAt,
             Long version
     ) {
-        return new Rental(rentalId, userId, status, rentalLines, rentedAt, scheduledReturnAt, returnedAt, createdAt, modifiedAt, version);
+        return new Rental(rentalId, userId, status, rentalLines, rentalPeriod, returnedAt, createdAt, modifiedAt, version);
     }
 
     public Rental(
+            RentalId rentalId,
             UserId userId,
             RentalStatus status,
             RentalLines rentalLines,
-            LocalDateTime rentedAt,
-            LocalDateTime scheduledReturnAt
+            RentalPeriod rentalPeriod
     ) {
+        this.rentalId = rentalId;
         this.userId = userId;
         this.status = status;
         this.rentalLines = rentalLines;
-        this.rentedAt = rentedAt;
-        this.scheduledReturnAt = scheduledReturnAt;
-        scheduleValidation();
+        this.rentalPeriod = rentalPeriod;
     }
 
-    public static Rental create(CreateRentalCommand command) {
+    public static Rental create(RentalId rentalId, DoRentalCommand command) {
         return new Rental(
+                rentalId,
                 command.getUserId(),
                 RentalStatus.RENTED,
                 command.getRentalLines(),
-                command.getRentedAt(),
-                command.getScheduledReturnAt()
+                command.getRentalPeriod()
         );
     }
 
@@ -72,22 +84,16 @@ public class Rental {
         return this.rentalLines;
     }
 
-    private void scheduleValidation() {
-        if (this.rentedAt.isAfter(this.scheduledReturnAt)) {
-            throw new IllegalArgumentException("대여일이 반납 예정일보다 이후 일 수 없습니다.");
-        }
-    }
-
     public void doReturn(DoReturnCommand command) {
         if (this.status != RentalStatus.RENTED) {
             throw new IllegalStateException("반납은 대여중 상태에서만 가능합니다.");
         }
-        if (command.getReturnedAt().isBefore(this.rentedAt)) {
+        if (command.getReturnedAt().isBefore(this.rentalPeriod.getStartedAt())) {
             throw new IllegalArgumentException("반납일이 대여일보다 이전 일 수 없습니다.");
         }
         this.status = RentalStatus.RETURNED;
         this.returnedAt = command.getReturnedAt();
-        this.modifiedAt = NOW;
+        this.modifiedAt = LocalDateTime.now();
     }
 
     public void doCancel() {
@@ -95,6 +101,6 @@ public class Rental {
             throw new IllegalStateException("취소는 대여중 상태에서만 가능합니다.");
         }
         this.status = RentalStatus.CANCELED;
-        this.modifiedAt = NOW;
+        this.modifiedAt = LocalDateTime.now();
     }
 }

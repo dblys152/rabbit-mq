@@ -1,11 +1,6 @@
 package com.ys.rental.domain;
 
-import com.ys.product.domain.product.Product;
-import com.ys.product.domain.product.ProductId;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import com.ys.rental.refs.product.domain.ProductId;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Value;
@@ -16,23 +11,22 @@ import java.util.Set;
 
 @Value(staticConstructor = "of")
 public class RentalLines {
-
     @NotNull
     @Size(min = 1)
     List<RentalLine> items;
 
     private RentalLines(List<RentalLine> items) {
         this.items = items;
-        validationRedundancy();
+        validateRedundancy();
     }
 
-    private void validationRedundancy() {
+    private void validateRedundancy() {
         Set<ProductId> productIdSet = new HashSet<>();
         this.items.stream()
                 .filter(r -> !productIdSet.add(r.getProductId()))
                 .findFirst()
                 .ifPresent(p -> {
-                    throw new IllegalArgumentException("상품을 중복해서 넣을 수 없습니다.");
+                    throw new IllegalArgumentException("상품이 중복됩니다.");
                 });
     }
 

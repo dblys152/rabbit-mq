@@ -1,17 +1,17 @@
 package com.ys.rental.domain;
 
+import com.ys.infrastructure.utils.SelfValidating;
 import jakarta.validation.constraints.NotNull;
-import lombok.Value;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Value(staticConstructor = "of")
+@Getter
 public class DoReturnCommand extends SelfValidating<DoReturnCommand> {
-
     @NotNull
-    LocalDateTime returnedAt;
+    private LocalDateTime returnedAt;
 
-    private DoReturnCommand(LocalDateTime returnedAt) {
+    public DoReturnCommand(LocalDateTime returnedAt) {
         this.returnedAt = returnedAt;
         validateSelf();
     }
