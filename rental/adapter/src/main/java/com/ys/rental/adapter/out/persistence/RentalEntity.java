@@ -1,6 +1,7 @@
 package com.ys.rental.adapter.out.persistence;
 
 import com.ys.rental.domain.*;
+import com.ys.rental.refs.user.domain.UserId;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,9 +11,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-@Entity(name = "RENTAL_LIST")
+@Entity
+@Table(name = "RENTALS")
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,16 +21,12 @@ import java.util.Optional;
 @Getter
 @ToString
 public class RentalEntity extends AbstractAggregateRoot<RentalEntity> {
-
-    private static final LocalDateTime NOW = LocalDateTime.now();
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RENTAL_ID")
-    private Integer rentalId;
+    private Long rentalId;
 
     @Column(name = "USER_ID", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -38,11 +35,11 @@ public class RentalEntity extends AbstractAggregateRoot<RentalEntity> {
     @OneToMany(mappedBy = "rentalEntity", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<RentalLineEntity> rentalLineList;
 
-    @Column(name = "RENTED_AT", nullable = false)
-    private LocalDateTime rentedAt;
+    @Column(name = "STARTED_AT", nullable = false)
+    private LocalDateTime startedAt;
 
-    @Column(name = "SCHEDULED_RETURN_AT", nullable = false)
-    private LocalDateTime scheduledReturnAt;
+    @Column(name = "ENDED_AT", nullable = false)
+    private LocalDateTime endedAt;
 
     @Column(name = "RETURNED_AT")
     private LocalDateTime returnedAt;
@@ -57,22 +54,46 @@ public class RentalEntity extends AbstractAggregateRoot<RentalEntity> {
     @Column(name = "VERSION")
     private Long version;
 
+    private void setRentalLineList(List<RentalLineEntity> rentalLineList) {
+        this.rentalLineList = rentalLineList;
+    }
+
     public static RentalEntity fromDomain(Rental rental) {
-        return new RentalEntity(
-                Optional.ofNullable(rental.getRentalId())
-                        .map(RentalId::getId)
-                        .orElse(null),
-                rental.getUserId().getId(),
+        RentalLines rentalLines = rental.getRentalLines();
+        RentalPeriod rentalPeriod = rental.getRentalPeriod();
+        RentalEntity rentalEntity = new RentalEntity(
+                rental.getRentalId().get(),
+                rental.getUserId().get(),
                 rental.getStatus(),
-                rental.getRentalLines().getItems().stream()
-                        .map(RentalLineEntity::fromDomain)
-                        .toList(),
-                rental.getRentedAt(),
-                rental.getScheduledReturnAt(),
+                null,
+                rentalPeriod.getStartedAt(),
+                rentalPeriod.getEndedAt(),
                 rental.getReturnedAt(),
                 rental.getCreatedAt(),
                 rental.getModifiedAt(),
                 rental.getVersion()
+        );
+
+        rentalEntity.setRentalLineList(rentalLines.getItems().stream()
+                .map(rentalLine -> RentalLineEntity.fromDomain(rentalEntity, rentalLine))
+                .toList());
+
+        return rentalEntity;
+    }
+
+    public Rental toDomain() {
+        return Rental.of(
+                RentalId.of(this.rentalId),
+                UserId.of(this.userId),
+                this.status,
+                RentalLines.of(this.rentalLineList.stream()
+                        .map(rentalLineEntity -> rentalLineEntity.toDomain())
+                        .toList()),
+                RentalPeriod.of(this.startedAt, this.endedAt),
+                this.returnedAt,
+                this.createdAt,
+                this.modifiedAt,
+                this.version
         );
     }
 }
