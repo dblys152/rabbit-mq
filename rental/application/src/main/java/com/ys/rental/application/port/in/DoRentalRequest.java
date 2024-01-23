@@ -1,8 +1,5 @@
 package com.ys.rental.application.port.in;
 
-import com.ys.rental.domain.RentalLines;
-import com.ys.rental.refs.user.domain.UserId;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -10,20 +7,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class CreateRentalRequest {
-
+public class DoRentalRequest {
     @NotNull
-    private Integer userId;
+    private Long userId;
     @NotNull
     private List<CreateRentalLineRequest> rentalLineList;
     @NotNull
-    private LocalDateTime rentedAt;
+    private LocalDateTime startedAt;
     @NotNull
-    private LocalDateTime scheduledReturnAt;
+    private LocalDateTime endedAt;
 
     @Data
     public static class CreateRentalLineRequest {
-        private Integer productId;
+        private Long productId;
         private int price;
         private int quantity;
     }
