@@ -84,23 +84,32 @@ public class Rental {
         return this.rentalLines;
     }
 
-    public void doReturn(DoReturnCommand command) {
-        if (this.status != RentalStatus.RENTED) {
-            throw new IllegalStateException("반납은 대여중 상태에서만 가능합니다.");
-        }
-        if (command.getReturnedAt().isBefore(this.rentalPeriod.getStartedAt())) {
-            throw new IllegalArgumentException("반납일이 대여일보다 이전 일 수 없습니다.");
-        }
-        this.status = RentalStatus.RETURNED;
-        this.returnedAt = command.getReturnedAt();
+    public void doCancel() {
+        validateToCancel();
+        this.status = RentalStatus.CANCELED;
         this.modifiedAt = LocalDateTime.now();
     }
 
-    public void doCancel() {
+    private void validateToCancel() {
         if (this.status != RentalStatus.RENTED) {
             throw new IllegalStateException("취소는 대여중 상태에서만 가능합니다.");
         }
-        this.status = RentalStatus.CANCELED;
-        this.modifiedAt = LocalDateTime.now();
+        if (LocalDateTime.now().isAfter(this.rentalPeriod.getStartedAt())) {
+            throw new IllegalStateException("대여 중인 상태이므로 취소 할 수 없습니다.");
+        }
+    }
+
+    public void doReturn() {
+        validateToReturn();
+        LocalDateTime now = LocalDateTime.now();
+        this.status = RentalStatus.RETURNED;
+        this.returnedAt = now;
+        this.modifiedAt = now;
+    }
+
+    private void validateToReturn() {
+        if (this.status != RentalStatus.RENTED) {
+            throw new IllegalStateException("반납은 대여중 상태에서만 가능합니다.");
+        }
     }
 }

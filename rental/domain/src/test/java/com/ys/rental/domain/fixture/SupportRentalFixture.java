@@ -20,4 +20,5 @@ public class SupportRentalFixture {
     protected static final RentalLine RENTAL_LINE_2 = RentalLine.create(PRODUCT_ID_2, MONEY_1000, QUANTITY_TWO);
     protected static final RentalLines RENTAL_LINES = RentalLines.of(Arrays.asList(RENTAL_LINE, RENTAL_LINE_2));
     protected static final RentalPeriod RENTAL_PERIOD = RentalPeriod.of(NOW, NOW.plusHours(3));
+    protected static final RentalPeriod RESERVED_RENTAL_PERIOD = RentalPeriod.of(NOW.plusHours(3), NOW.plusHours(6));
 }

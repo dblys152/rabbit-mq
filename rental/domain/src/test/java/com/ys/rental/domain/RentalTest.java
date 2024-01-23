@@ -4,14 +4,13 @@ import com.ys.rental.domain.fixture.SupportRentalFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class RentalTest extends SupportRentalFixture {
     private Rental rental;
+    private Rental reservedRental;
     private Rental returnedRental;
     private Rental canceledRental;
 
@@ -19,6 +18,8 @@ class RentalTest extends SupportRentalFixture {
     void setUp() {
         rental = Rental.of(
                 RENTAL_ID, USER_ID, RentalStatus.RENTED, RENTAL_LINES, RENTAL_PERIOD, null, NOW, NOW, 0L);
+        reservedRental = Rental.of(
+                RENTAL_ID, USER_ID, RentalStatus.RENTED, RENTAL_LINES, RESERVED_RENTAL_PERIOD, null, NOW, NOW, 0L);
         returnedRental = Rental.of(
                 RENTAL_ID, USER_ID, RentalStatus.RETURNED, RENTAL_LINES, RENTAL_PERIOD, NOW.plusHours(2), NOW, NOW, 0L);
         canceledRental = Rental.of(
@@ -41,11 +42,26 @@ class RentalTest extends SupportRentalFixture {
     }
 
     @Test
-    void 대여_상품을_반납한다() {
-        LocalDateTime returnedAt = NOW.plusHours(2);
-        DoReturnCommand command = new DoReturnCommand(returnedAt);
+    void 대여_취소한다() {
+        reservedRental.doCancel();
 
-        rental.doReturn(command);
+        assertThat(reservedRental.getStatus()).isEqualTo(RentalStatus.CANCELED);
+    }
+
+    @Test
+    void 취소_시_대여중인_상태가_아니면_에러를_반환한다() {
+        assertThatThrownBy(() -> returnedRental.doCancel()).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> canceledRental.doCancel()).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void 취소_시_대여_시작_시간이_지나_이미_대여_중이면_에러를_반환한다() {
+        assertThatThrownBy(() -> rental.doCancel()).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void 대여_반납한다() {
+        rental.doReturn();
 
         assertAll(
                 () -> assertThat(rental.getStatus()).isEqualTo(RentalStatus.RETURNED),
@@ -58,26 +74,5 @@ class RentalTest extends SupportRentalFixture {
     void 반납_시_대여중인_상태가_아니면_에러를_반환한다() {
         assertThatThrownBy(() -> canceledRental.doCancel()).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(() -> returnedRental.doCancel()).isInstanceOf(IllegalStateException.class);
-    }
-
-    @Test
-    void 반납_시_반납일이_대여일보다_이전이면_에러를_반환한다() {
-        LocalDateTime returnedAt = rental.getRentalPeriod().getStartedAt().minusHours(1);
-        DoReturnCommand command = new DoReturnCommand(returnedAt);
-
-        assertThatThrownBy(() -> rental.doReturn(command)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 대여를_취소한다() {
-        rental.doCancel();
-
-        assertThat(rental.getStatus()).isEqualTo(RentalStatus.CANCELED);
-    }
-
-    @Test
-    void 취소_시_대여중인_상태가_아니면_에러를_반환한다() {
-        assertThatThrownBy(() -> returnedRental.doCancel()).isInstanceOf(IllegalStateException.class);
-        assertThatThrownBy(() -> canceledRental.doCancel()).isInstanceOf(IllegalStateException.class);
     }
 }
