@@ -6,8 +6,10 @@ import com.ys.rental.application.port.in.DoRentalRequest;
 import com.ys.rental.domain.*;
 import com.ys.rental.refs.product.domain.ProductId;
 import com.ys.rental.refs.user.domain.UserId;
+import org.springframework.stereotype.Component;
 
-public class CreateRentalCommandFactory implements CommandFactory<DoRentalRequest, DoRentalCommand> {
+@Component
+public class DoRentalCommandFactory implements CommandFactory<DoRentalRequest, DoRentalCommand> {
     @Override
     public DoRentalCommand create(DoRentalRequest request) {
         try {
