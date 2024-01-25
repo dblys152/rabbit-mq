@@ -1,12 +1,19 @@
 package com.ys.rental.domain;
 
 import com.ys.rental.refs.product.domain.ProductId;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Value(staticConstructor = "of")
 public class RentalLine {
+    @Valid
+    @NotNull
     private ProductId productId;
+
+    @NotNull
     private Money price;
+
     private int quantity;
 
     private Long version;
