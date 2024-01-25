@@ -1,11 +1,6 @@
 logging:
   level:
-    org:
-      hibernate:
-        SQL: DEBUG
-
-server:
-  port: 8040
+    root: INFO
 
 spring:
   cloud:
@@ -25,3 +20,11 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  rabbitmq:
+    host: localhost:5672
+    username: ysrabbit
+    password: ysrabbit
+
+rabbitmq:
+  queue:
+    register-event-store: q.register-event-store

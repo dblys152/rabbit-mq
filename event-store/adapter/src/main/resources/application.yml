@@ -1,3 +1,13 @@
+server:
+  port: 8040
+
 spring:
+  application:
+    name: event-store
   profiles:
     active: local
+
+api-key:
+  header: X-API-Key
+  value:
+    event: QVBJLUtFWS1GT1ItTVNDLUVWRU5ULVNUT1JF
