@@ -8,12 +8,8 @@
 	<logger name="org.quartz.core" level="INFO"/>
 	<logger name="org.h2.server.web" level="INFO"/>
 
-	<logger name="jdbc.sqlonly" level="OFF"/>
-	<logger name="jdbc.sqltiming" level="INFO"/>
-	<logger name="jdbc.resultsettable" level="INFO"/>
-	<logger name="jdbc.audit" level="OFF"/>
-	<logger name="jdbc.resultset" level="OFF"/>
-	<logger name="jdbc.connection" level="OFF"/>
+	<logger name="org.hibernate.SQL" level="DEBUG" />
+	<logger name="org.hibernate.type" level="TRACE"/>
 
 	<springProperty scope="context" name="LOG_PATH" source="logging.path" defaultValue="logs"/>
 	<springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name" defaultValue="app"/>
