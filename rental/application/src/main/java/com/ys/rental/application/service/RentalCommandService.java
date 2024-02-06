@@ -1,7 +1,8 @@
 package com.ys.rental.application.service;
 
 import com.github.f4b6a3.tsid.TsidCreator;
-import com.ys.infrastructure.message.DomainEventPublisher;
+import com.ys.infrastructure.event.DomainEventPublisher;
+import com.ys.infrastructure.utils.EventFactory;
 import com.ys.rental.application.port.in.DoCancelUseCase;
 import com.ys.rental.application.port.in.DoRentalUseCase;
 import com.ys.rental.application.port.in.DoReturnUseCase;
@@ -10,8 +11,9 @@ import com.ys.rental.application.port.out.RecordRentalLinePort;
 import com.ys.rental.application.port.out.RecordRentalPort;
 import com.ys.rental.domain.DoRentalCommand;
 import com.ys.rental.domain.Rental;
-import com.ys.rental.domain.RentalEventType;
 import com.ys.rental.domain.RentalId;
+import com.ys.rental.domain.event.RentalEvent;
+import com.ys.rental.domain.event.RentalEventType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class RentalCommandService implements DoRentalUseCase, DoCancelUseCase, DoReturnUseCase {
-    private final DomainEventPublisher<Rental> rentalDomainEventPublisher;
     private final RecordRentalPort recordRentalPort;
     private final RecordRentalLinePort recordRentalLinePort;
     private final LoadRentalPort loadRentalPort;
+    private final EventFactory<Rental, RentalEvent> eventFactory;
+    private final DomainEventPublisher<RentalEvent> domainEventPublisher;
 
     @Override
     public Rental doRental(DoRentalCommand command) {
@@ -33,7 +36,8 @@ public class RentalCommandService implements DoRentalUseCase, DoCancelUseCase, D
         Rental savedRental = recordRentalPort.save(rental);
         recordRentalLinePort.saveAll(savedRental);
 
-        rentalDomainEventPublisher.publish(RentalEventType.DO_RENTAL_EVENT.name(), savedRental, savedRental.getCreatedAt());
+        domainEventPublisher.publish(
+                RentalEventType.DO_RENTAL_EVENT.name(), eventFactory.create(savedRental), savedRental.getCreatedAt());
 
         return savedRental;
     }
@@ -45,7 +49,8 @@ public class RentalCommandService implements DoRentalUseCase, DoCancelUseCase, D
         rental.doCancel();
         Rental savedRental = recordRentalPort.save(rental);
 
-        rentalDomainEventPublisher.publish(RentalEventType.DO_CANCEL_RENTAL_EVENT.name(), savedRental, savedRental.getModifiedAt());
+        domainEventPublisher.publish(
+                RentalEventType.DO_CANCEL_RENTAL_EVENT.name(), eventFactory.create(savedRental), savedRental.getModifiedAt());
 
         return savedRental;
     }
@@ -57,7 +62,8 @@ public class RentalCommandService implements DoRentalUseCase, DoCancelUseCase, D
         rental.doReturn();
         Rental savedRental = recordRentalPort.save(rental);
 
-        rentalDomainEventPublisher.publish(RentalEventType.DO_RETURN_RENTAL_EVENT.name(), savedRental, savedRental.getReturnedAt());
+        domainEventPublisher.publish(
+                RentalEventType.DO_RETURN_RENTAL_EVENT.name(), eventFactory.create(savedRental), savedRental.getReturnedAt());
 
         return savedRental;
     }

@@ -1,8 +1,8 @@
 package com.ys.rental.application.listener;
 
-import com.ys.infrastructure.message.DomainEvent;
-import com.ys.infrastructure.rabbitmq.QueueNameMapping;
-import com.ys.infrastructure.rabbitmq.RabbitMqExchange;
+import com.ys.infrastructure.event.DomainEvent;
+import com.ys.infrastructure.queue.QueueNameMapping;
+import com.ys.infrastructure.queue.RabbitMqExchange;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

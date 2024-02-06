@@ -1,13 +1,15 @@
 package com.ys.rental.application.service;
 
-import com.ys.infrastructure.message.DomainEventPublisher;
+import com.ys.infrastructure.event.DomainEventPublisher;
+import com.ys.infrastructure.utils.EventFactory;
 import com.ys.rental.application.port.out.LoadRentalPort;
 import com.ys.rental.application.port.out.RecordRentalLinePort;
 import com.ys.rental.application.port.out.RecordRentalPort;
 import com.ys.rental.domain.DoRentalCommand;
 import com.ys.rental.domain.Rental;
-import com.ys.rental.domain.RentalEventType;
 import com.ys.rental.domain.RentalId;
+import com.ys.rental.domain.event.RentalEvent;
+import com.ys.rental.domain.event.RentalEventType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,23 +36,28 @@ class RentalCommandServiceTest {
     @Mock
     private RecordRentalLinePort recordRentalLinePort;
     @Mock
-    private DomainEventPublisher<Rental> rentalDomainEventPublisher;
-    @Mock
     private LoadRentalPort loadRentalPort;
+    @Mock
+    private EventFactory<Rental, RentalEvent> eventFactory;
+    @Mock
+    private DomainEventPublisher<RentalEvent> domainEventPublisher;
 
     @Test
     void 상품을_대여한다() {
         Rental mockSavedRental = mock(Rental.class);
 
         when(recordRentalPort.save(any(Rental.class))).thenReturn(mockSavedRental);
+        RentalEvent mockRentalEvent = mock(RentalEvent.class);
+        when(eventFactory.create(mockSavedRental)).thenReturn(mockRentalEvent);
+
         Rental actual = sut.doRental(mock(DoRentalCommand.class));
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> then(recordRentalPort).should().save(any(Rental.class)),
                 () -> then(recordRentalLinePort).should().saveAll(mockSavedRental),
-                () -> then(rentalDomainEventPublisher).should().publish(
-                        RentalEventType.DO_RENTAL_EVENT.name(), mockSavedRental, mockSavedRental.getCreatedAt())
+                () -> then(domainEventPublisher).should().publish(
+                        RentalEventType.DO_RENTAL_EVENT.name(), mockRentalEvent, mockSavedRental.getCreatedAt())
         );
     }
 
@@ -61,6 +68,9 @@ class RentalCommandServiceTest {
 
         Rental mockSavedRental = mock(Rental.class);
         when(recordRentalPort.save(mockRental)).thenReturn(mockSavedRental);
+        RentalEvent mockRentalEvent = mock(RentalEvent.class);
+        when(eventFactory.create(mockSavedRental)).thenReturn(mockRentalEvent);
+
         Rental actual = sut.doCancel(RENTAL_ID);
 
         assertAll(
@@ -68,8 +78,8 @@ class RentalCommandServiceTest {
                 () -> then(loadRentalPort).should().findById(RENTAL_ID),
                 () -> then(mockRental).should().doCancel(),
                 () -> then(recordRentalPort).should().save(mockRental),
-                () -> then(rentalDomainEventPublisher).should().publish(
-                        RentalEventType.DO_CANCEL_RENTAL_EVENT.name(), mockSavedRental, mockSavedRental.getModifiedAt())
+                () -> then(domainEventPublisher).should().publish(
+                        RentalEventType.DO_CANCEL_RENTAL_EVENT.name(), mockRentalEvent, mockSavedRental.getModifiedAt())
         );
     }
 
@@ -80,6 +90,9 @@ class RentalCommandServiceTest {
 
         Rental mockSavedRental = mock(Rental.class);
         when(recordRentalPort.save(mockRental)).thenReturn(mockSavedRental);
+        RentalEvent mockRentalEvent = mock(RentalEvent.class);
+        when(eventFactory.create(mockSavedRental)).thenReturn(mockRentalEvent);
+
         Rental actual = sut.doReturn(RENTAL_ID);
 
         assertAll(
@@ -87,8 +100,8 @@ class RentalCommandServiceTest {
                 () -> then(loadRentalPort).should().findById(RENTAL_ID),
                 () -> then(mockRental).should().doReturn(),
                 () -> then(recordRentalPort).should().save(mockRental),
-                () -> then(rentalDomainEventPublisher).should().publish(
-                        RentalEventType.DO_RETURN_RENTAL_EVENT.name(), mockSavedRental, mockSavedRental.getReturnedAt())
+                () -> then(domainEventPublisher).should().publish(
+                        RentalEventType.DO_RETURN_RENTAL_EVENT.name(), mockRentalEvent, mockSavedRental.getReturnedAt())
         );
     }
 }

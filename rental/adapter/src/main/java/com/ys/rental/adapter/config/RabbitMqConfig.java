@@ -1,8 +1,8 @@
 package com.ys.rental.adapter.config;
 
-import com.ys.infrastructure.rabbitmq.RabbitMqExchange;
-import com.ys.infrastructure.rabbitmq.RabbitMqExchangeNameMapping;
-import com.ys.rental.domain.RentalEventType;
+import com.ys.infrastructure.queue.RabbitMqExchange;
+import com.ys.infrastructure.queue.RabbitMqExchangeNameMapping;
+import com.ys.rental.domain.event.RentalEventType;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.FanoutExchange;
@@ -61,7 +61,7 @@ public class RabbitMqConfig {
         return rabbitAdmin;
     }
 
-    // Name Mapping For Message Sender
+    // Queue Name Mapping For Message Sender
     @Bean
     public RabbitMqExchangeNameMapping rabbitMqExchangeNameMapping() {
         RabbitMqExchangeNameMapping mapping = new RabbitMqExchangeNameMapping();
