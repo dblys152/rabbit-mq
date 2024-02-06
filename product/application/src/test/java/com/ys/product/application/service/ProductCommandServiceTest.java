@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,6 +22,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ProductCommandServiceTest {
     private static final ProductId PRODUCT_ID = ProductId.of(99999999999L);
+    private static final ProductId PRODUCT_ID2 = ProductId.of(99999999998L);
 
     @InjectMocks
     private ProductCommandService sut;
@@ -74,6 +77,36 @@ class ProductCommandServiceTest {
                 () -> then(mockProduct).should().changeStatus(command),
                 () -> then(recordProductPort).should().save(mockProduct)
         );
+    }
+
+    @Test
+    void 상품_상태를_일괄_변경한다() {
+        ChangeProductStatusCommand command = getMockChangeProductStatusCommand(PRODUCT_ID);
+        ChangeProductStatusCommand command2 = getMockChangeProductStatusCommand(PRODUCT_ID2);
+        List<ChangeProductStatusCommand> commandList = List.of(command, command2);
+
+        List<ProductId> productIdList = List.of(PRODUCT_ID, PRODUCT_ID2);
+        Products mockProducts = mock(Products.class);
+        given(loadProductPort.findAllById(productIdList)).willReturn(mockProducts);
+
+        Products changedProducts = mock(Products.class);
+        when(mockProducts.changeStatus(commandList)).thenReturn(changedProducts);
+        when(recordProductPort.saveAll(changedProducts)).thenReturn(mock(Products.class));
+
+        Products actual = sut.changeStatusBulk(commandList);
+
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> then(loadProductPort).should().findAllById(productIdList),
+                () -> then(mockProducts).should().changeStatus(commandList),
+                () -> then(recordProductPort).should().saveAll(changedProducts)
+        );
+    }
+
+    private static ChangeProductStatusCommand getMockChangeProductStatusCommand(ProductId productId) {
+        ChangeProductStatusCommand command = mock(ChangeProductStatusCommand.class);
+        given(command.getProductId()).willReturn(productId);
+        return command;
     }
 
     @Test

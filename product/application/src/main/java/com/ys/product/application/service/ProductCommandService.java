@@ -1,10 +1,7 @@
 package com.ys.product.application.service;
 
 import com.github.f4b6a3.tsid.TsidCreator;
-import com.ys.product.application.port.in.ChangeProductStatusUseCase;
-import com.ys.product.application.port.in.ChangeProductUseCase;
-import com.ys.product.application.port.in.DeleteProductUseCase;
-import com.ys.product.application.port.in.RegisterProductUseCase;
+import com.ys.product.application.port.in.*;
 import com.ys.product.application.port.out.LoadProductPort;
 import com.ys.product.application.port.out.RecordProductPort;
 import com.ys.product.domain.product.*;
@@ -12,10 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class ProductCommandService implements RegisterProductUseCase, ChangeProductUseCase, ChangeProductStatusUseCase, DeleteProductUseCase {
+public class ProductCommandService implements
+        RegisterProductUseCase, ChangeProductUseCase, ChangeProductStatusUseCase, ChangeProductStatusBulkUseCase, DeleteProductUseCase {
     private final RecordProductPort recordProductPort;
     private final LoadProductPort loadProductPort;
 
@@ -47,6 +47,22 @@ public class ProductCommandService implements RegisterProductUseCase, ChangeProd
         Product savedProduct = recordProductPort.save(product);
 
         return savedProduct;
+    }
+
+    @Override
+    public Products changeStatusBulk(List<ChangeProductStatusCommand> commandList) {
+        Products products = loadProductPort.findAllById(commandList.stream()
+                .map(c -> c.getProductId())
+                .toList());
+
+        Products changedProducts = products.changeStatus(commandList);
+
+        if (!changedProducts.isEmpty()) {
+            Products savedProducts = recordProductPort.saveAll(changedProducts);
+            return savedProducts;
+        }
+
+        return changedProducts;
     }
 
     @Override
