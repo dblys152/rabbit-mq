@@ -7,7 +7,7 @@ spring:
     config:
       enabled: false
   datasource:
-    url: jdbc:log4jdbc:h2:mem:product_test_db;DATABASE_TO_UPPER=false
+    url: jdbc:log4jdbc:h2:mem:event_test_db;DATABASE_TO_UPPER=false
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     username: sa
     password:
