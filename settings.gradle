@@ -7,6 +7,7 @@ include 'event-store:application'
 include 'event-store:adapter'
 
 include 'product:refs:category'
+include 'product:refs:rental'
 include 'product:domain'
 include 'product:application'
 include 'product:adapter'

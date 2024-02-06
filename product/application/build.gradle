@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':product:refs:category')
+    implementation project(':product:refs:rental')
     implementation project(':product:domain')
 }
 
