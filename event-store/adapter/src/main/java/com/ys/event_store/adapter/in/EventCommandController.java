@@ -1,10 +1,10 @@
 package com.ys.event_store.adapter.in;
 
 import com.ys.event_store.adapter.in.model.EventModel;
-import com.ys.event_store.application.port.in.CreateEventUseCase;
+import com.ys.event_store.application.port.in.RegisterEventUseCase;
 import com.ys.event_store.domain.CreateEventCommand;
 import com.ys.event_store.domain.Event;
-import com.ys.infrastructure.message.DomainEvent;
+import com.ys.infrastructure.event.DomainEvent;
 import com.ys.infrastructure.utils.ApiResponseModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +25,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EventCommandController {
 
-    private final CreateEventUseCase createEventUseCase;
+    private final RegisterEventUseCase registerEventUseCase;
 
     @PostMapping("")
-    public ResponseEntity<ApiResponseModel<EventModel>> create(@Valid @RequestBody DomainEvent<Map<String, Object>> domainEvent) {
-        Event event = createEventUseCase.create(new CreateEventCommand(
+    public ResponseEntity<ApiResponseModel<EventModel>> register(@Valid @RequestBody DomainEvent<Map<String, Object>> domainEvent) {
+        Event event = registerEventUseCase.register(new CreateEventCommand(
                 domainEvent.getType(), domainEvent.getPayload(), domainEvent.getPublisherId(), domainEvent.getPublishedAt()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseModel.success(

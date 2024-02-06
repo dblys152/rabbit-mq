@@ -1,7 +1,7 @@
 package com.ys.event_store.application.service;
 
 import com.github.f4b6a3.tsid.TsidCreator;
-import com.ys.event_store.application.port.in.CreateEventUseCase;
+import com.ys.event_store.application.port.in.RegisterEventUseCase;
 import com.ys.event_store.application.port.out.RecordEventPort;
 import com.ys.event_store.domain.CreateEventCommand;
 import com.ys.event_store.domain.Event;
@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class EventCommandService implements CreateEventUseCase {
+public class EventCommandService implements RegisterEventUseCase {
     private final RecordEventPort recordEventPort;
 
     @Override
-    public Event create(CreateEventCommand command) {
+    public Event register(CreateEventCommand command) {
         EventId eventId = EventId.of(TsidCreator.getTsid().toLong());
 
         Event event = Event.create(eventId, command);

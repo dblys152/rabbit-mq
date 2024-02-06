@@ -17,7 +17,6 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class EventCommandServiceTest {
-
     @InjectMocks
     private EventCommandService sut;
 
@@ -26,7 +25,7 @@ class EventCommandServiceTest {
 
     @Test
     void 이벤트를_등록한다() {
-        Event actual = sut.create(mock(CreateEventCommand.class));
+        Event actual = sut.register(mock(CreateEventCommand.class));
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
