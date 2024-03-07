@@ -1,6 +1,6 @@
 package com.ys.product.adapter.in;
 
-import com.ys.infrastructure.event.EventMessageEnvelopProcessTemplate;
+import com.ys.shared.event.EventMessageEnvelopProcessTemplate;
 import com.ys.product.refs.rental.domain.RentalEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

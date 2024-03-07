@@ -1,6 +1,6 @@
 package com.ys.rental.domain;
 
-import com.ys.infrastructure.utils.SelfValidating;
+import com.ys.shared.utils.SelfValidating;
 import com.ys.rental.refs.user.domain.UserId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

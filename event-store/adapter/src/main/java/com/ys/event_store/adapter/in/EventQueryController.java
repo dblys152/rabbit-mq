@@ -3,7 +3,7 @@ package com.ys.event_store.adapter.in;
 import com.ys.event_store.adapter.in.model.EventModel;
 import com.ys.event_store.application.port.in.GetEventQuery;
 import com.ys.event_store.domain.Events;
-import com.ys.infrastructure.utils.ApiResponseModel;
+import com.ys.shared.utils.ApiResponseModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

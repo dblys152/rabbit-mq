@@ -1,6 +1,6 @@
 package com.ys.event_store.domain;
 
-import com.ys.infrastructure.utils.SelfValidating;
+import com.ys.shared.utils.SelfValidating;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

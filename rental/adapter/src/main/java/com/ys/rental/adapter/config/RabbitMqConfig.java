@@ -1,7 +1,7 @@
 package com.ys.rental.adapter.config;
 
-import com.ys.infrastructure.queue.RabbitMqExchange;
-import com.ys.infrastructure.queue.RabbitMqExchangeNameMapping;
+import com.ys.shared.queue.RabbitMqExchange;
+import com.ys.shared.queue.RabbitMqExchangeNameMapping;
 import com.ys.rental.domain.event.RentalEventType;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

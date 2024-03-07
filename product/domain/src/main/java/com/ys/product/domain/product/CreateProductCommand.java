@@ -1,6 +1,6 @@
 package com.ys.product.domain.product;
 
-import com.ys.infrastructure.utils.SelfValidating;
+import com.ys.shared.utils.SelfValidating;
 import com.ys.product.refs.category.domain.CategoryId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

@@ -27,7 +27,7 @@ configure(javaProjects) {
     }
 
     dependencies {
-        implementation 'com.github.dblys152:infrastructure:1.0.6'
+        implementation 'com.github.dblys152:shared:1.0.7'
 
         implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
         implementation 'org.hibernate:hibernate-validator:7.0.5.Final'

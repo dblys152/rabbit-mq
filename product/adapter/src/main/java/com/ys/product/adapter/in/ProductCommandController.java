@@ -1,7 +1,7 @@
 package com.ys.product.adapter.in;
 
-import com.ys.infrastructure.utils.ApiResponseModel;
-import com.ys.infrastructure.utils.CommandFactory;
+import com.ys.shared.utils.ApiResponseModel;
+import com.ys.shared.utils.CommandFactory;
 import com.ys.product.adapter.in.model.ProductModel;
 import com.ys.product.application.port.in.ChangeProductStatusUseCase;
 import com.ys.product.application.port.in.ChangeProductUseCase;
@@ -58,7 +58,7 @@ public class ProductCommandController {
             @PathVariable("productId") long productId,
             @Valid @RequestBody ChangeProductStatusRequest request) {
         Product product = changeProductStatusUseCase.changeStatus(
-                ProductId.of(productId), new ChangeProductStatusCommand(request.getStatus()));
+                ProductId.of(productId), new ChangeProductStatusCommand(ProductId.of(productId), request.getStatus()));
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponseModel.success(
                 HttpStatus.OK.value(), ProductModel.fromDomain(product)));

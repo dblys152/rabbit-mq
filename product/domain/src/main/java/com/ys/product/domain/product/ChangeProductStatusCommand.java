@@ -1,6 +1,6 @@
 package com.ys.product.domain.product;
 
-import com.ys.infrastructure.utils.SelfValidating;
+import com.ys.shared.utils.SelfValidating;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 

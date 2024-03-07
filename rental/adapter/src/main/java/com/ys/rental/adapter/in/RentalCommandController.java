@@ -1,7 +1,7 @@
 package com.ys.rental.adapter.in;
 
-import com.ys.infrastructure.utils.ApiResponseModel;
-import com.ys.infrastructure.utils.CommandFactory;
+import com.ys.shared.utils.ApiResponseModel;
+import com.ys.shared.utils.CommandFactory;
 import com.ys.rental.adapter.in.model.RentalModel;
 import com.ys.rental.application.port.in.DoCancelUseCase;
 import com.ys.rental.application.port.in.DoRentalRequest;

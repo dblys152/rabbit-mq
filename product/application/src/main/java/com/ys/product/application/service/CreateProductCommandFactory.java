@@ -1,7 +1,7 @@
 package com.ys.product.application.service;
 
-import com.ys.infrastructure.exception.BadRequestException;
-import com.ys.infrastructure.utils.CommandFactory;
+import com.ys.shared.exception.BadRequestException;
+import com.ys.shared.utils.CommandFactory;
 import com.ys.product.application.port.in.model.RegisterProductRequest;
 import com.ys.product.domain.product.CreateProductCommand;
 import com.ys.product.domain.product.Money;

@@ -1,6 +1,6 @@
 package com.ys.rental.application.service;
 
-import com.ys.infrastructure.utils.EventFactory;
+import com.ys.shared.utils.EventFactory;
 import com.ys.rental.domain.Rental;
 import com.ys.rental.domain.RentalLines;
 import com.ys.rental.domain.RentalPeriod;

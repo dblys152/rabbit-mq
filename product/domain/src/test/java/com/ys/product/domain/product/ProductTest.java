@@ -78,7 +78,7 @@ class ProductTest extends SupportProductFixture {
 
     @Test
     void 상품_상태를_변경한다() {
-        ChangeProductStatusCommand command = new ChangeProductStatusCommand(ProductStatus.UNDER_REPAIR);
+        ChangeProductStatusCommand command = new ChangeProductStatusCommand(PRODUCT_ID, ProductStatus.UNDER_REPAIR);
 
         rentalProduct.changeStatus(command);
 
@@ -87,7 +87,7 @@ class ProductTest extends SupportProductFixture {
 
     @Test
     void 상태_변경_시_상품_유형에_맞는_상태가_아니면_에러를_반환한다() {
-        ChangeProductStatusCommand command = new ChangeProductStatusCommand(ProductStatus.SALE_AVAILABLE);
+        ChangeProductStatusCommand command = new ChangeProductStatusCommand(PRODUCT_ID, ProductStatus.SALE_AVAILABLE);
 
         assertThatThrownBy(() -> rentalProduct.changeStatus(command)).isInstanceOf(IllegalArgumentException.class);
     }

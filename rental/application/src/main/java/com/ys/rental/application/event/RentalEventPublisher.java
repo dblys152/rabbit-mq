@@ -1,7 +1,7 @@
 package com.ys.rental.application.event;
 
-import com.ys.infrastructure.event.DomainEvent;
-import com.ys.infrastructure.event.DomainEventPublisher;
+import com.ys.shared.event.DomainEvent;
+import com.ys.shared.event.DomainEventPublisher;
 import com.ys.rental.domain.event.RentalEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

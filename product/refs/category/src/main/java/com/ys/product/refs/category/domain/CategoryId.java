@@ -1,6 +1,6 @@
 package com.ys.product.refs.category.domain;
 
-import com.ys.infrastructure.data.IntegerId;
+import com.ys.shared.data.IntegerId;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 

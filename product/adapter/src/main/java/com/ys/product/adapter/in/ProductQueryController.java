@@ -1,6 +1,6 @@
 package com.ys.product.adapter.in;
 
-import com.ys.infrastructure.utils.ApiResponseModel;
+import com.ys.shared.utils.ApiResponseModel;
 import com.ys.product.adapter.in.model.ProductModel;
 import com.ys.product.application.port.in.GetProductQuery;
 import com.ys.product.domain.product.Product;
