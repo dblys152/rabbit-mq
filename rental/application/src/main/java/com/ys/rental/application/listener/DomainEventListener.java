@@ -5,6 +5,7 @@ import com.ys.shared.queue.QueueNameMapping;
 import com.ys.shared.queue.RabbitMqExchange;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class DomainEventListener {
 
         if (exchange != null) {
             rabbitTemplate.convertAndSend(
-                    exchange.getName(), exchange.getRoutingKey(), event.serialize());
+                    exchange.getName(), exchange.getRoutingKey(), event.serialize(), new CorrelationData(event.getId().toString()));
         } else {
             log.error("Failed Send Message");
         }

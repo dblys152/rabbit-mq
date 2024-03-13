@@ -3,17 +3,17 @@ package com.ys.rental.adapter.config;
 import com.ys.shared.queue.RabbitMqExchange;
 import com.ys.shared.queue.RabbitMqExchangeNameMapping;
 import com.ys.rental.domain.event.RentalEventType;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.FanoutExchange;
-import org.springframework.amqp.core.Queue;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Slf4j
 public class RabbitMqConfig {
     @Value("${rabbitmq.queue.register-event-store}")
     private String REGISTER_EVENT_STORE_QUEUE;
@@ -69,5 +69,20 @@ public class RabbitMqConfig {
         mapping.add(RentalEventType.DO_CANCEL_RENTAL_EVENT.name(), RabbitMqExchange.of(RENTAL_EXCHANGE, null));
         mapping.add(RentalEventType.DO_RETURN_RENTAL_EVENT.name(), RabbitMqExchange.of(RENTAL_EXCHANGE, null));
         return mapping;
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+
+        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+            if (!ack) {
+                Message message = correlationData.getReturned().getMessage();
+                byte[] body = message.getBody();
+                log.error("Fail to produce. ID: {}, Message: {}", correlationData.getId(), body);
+            }
+        });
+
+        return rabbitTemplate;
     }
 }

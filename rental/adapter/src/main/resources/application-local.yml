@@ -30,6 +30,7 @@ spring:
     host: localhost:5672
     username: ysrabbit
     password: ysrabbit
+    publisher-confirm-type: CORRELATED
 
 rabbitmq:
   queue:
