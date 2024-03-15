@@ -15,12 +15,12 @@ import java.util.function.Consumer;
 @Component
 @RequiredArgsConstructor
 public class ChangeProductStatusBulkProcessor implements Consumer<RentalEvent> {
-    private ChangeProductStatusBulkUseCase service;
+    private final ChangeProductStatusBulkUseCase changeProductStatusBulkUseCase;
 
     @Override
     public void accept(RentalEvent rentalEvent) {
         List<RentalEvent.RentalLineEvent> rentalLineList = rentalEvent.getRentalLineList();
-        service.changeStatusBulk(rentalLineList.stream()
+        changeProductStatusBulkUseCase.changeStatusBulk(rentalLineList.stream()
                 .map(rl -> new ChangeProductStatusCommand(ProductId.of(rl.getProductId()), getProductStatus(rentalEvent.getStatus())))
                 .toList());
     }
