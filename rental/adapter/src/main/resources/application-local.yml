@@ -35,6 +35,14 @@ spring:
 rabbitmq:
   queue:
     register-event-store: q.register-event-store
+    dead-letter-event-store: q.dead-letter-event-store
     change-product-status: q.change-product-status
+    dead-letter-product: q.dead-letter-product
   exchange:
-    rental: x.rental-fanout
+    rental:
+      name: x.rental-topic
+      default-routing-key: succeed-rental
+    dead-letter:
+      name: x.dead-letter-topic
+      product-routing-key: failed-product
+      event-store-routing-key: failed-event-store
