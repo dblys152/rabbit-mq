@@ -28,13 +28,8 @@ public class ChangeProductStatusConsumer {
     public void receive(Message message, Channel channel) throws IOException {
         EventMessageEnvelopProcessReturn processReturn = template.doProcess(new String(message.getBody()), RentalEvent.class, processor);
         switch (processReturn) {
-            case IGNORE:
-            case SUCCESS:
-                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-                break;
-            case RETRY:
-                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
-                break;
+            case IGNORE, SUCCESS -> channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            case RETRY -> channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
         }
     }
 }

@@ -1,18 +1,19 @@
 package com.ys.product.adapter.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Slf4j
 public class RabbitMqConfig {
     @Value("${rabbitmq.queue.change-product-status}")
     private String CHANGE_PRODUCT_STATUS_QUEUE;
@@ -28,13 +29,18 @@ public class RabbitMqConfig {
     @Bean
     public Queue changeProductStatusQueue() {
         return QueueBuilder.durable(CHANGE_PRODUCT_STATUS_QUEUE)
+                .withArgument("x-queue-type", "quorum")
+                .withArgument("x-delivery-limit", 4)
                 .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE)
                 .withArgument("x-dead-letter-routing-key", DEAD_LETTER_EXCHANGE_PRODUCT_ROUTING_KEY)
                 .build();
     }
     @Bean
     public Queue deadLetterProductQueue() {
-        return QueueBuilder.durable(DEAD_LETTER_PRODUCT_QUEUE).build();
+        return QueueBuilder.durable(DEAD_LETTER_PRODUCT_QUEUE)
+                .withArgument("x-queue-type", "quorum")
+                .withArgument("x-delivery-limit", 4)
+                .build();
     }
 
     /* Exchange */
@@ -54,18 +60,17 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public SimpleRabbitListenerContainerFactory containerFactory(ConnectionFactory connectionFactory) {
-        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setAdviceChain(
-                RetryInterceptorBuilder.stateless()
-                        .maxAttempts(3)
-                        .backOffOptions(1000, 2, 2000)
-                        .recoverer(new RejectAndDontRequeueRecoverer())
-                        .build());
-        factory.setChannelTransacted(true);
-        factory.setConcurrentConsumers(3);
-        factory.setMaxConcurrentConsumers(10);
-        return factory;
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+
+        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+            if (!ack) {
+                Message message = correlationData.getReturned().getMessage();
+                byte[] body = message.getBody();
+                log.error("Fail to produce. ID: {}, Message: {}", correlationData.getId(), body);
+            }
+        });
+
+        return rabbitTemplate;
     }
 }

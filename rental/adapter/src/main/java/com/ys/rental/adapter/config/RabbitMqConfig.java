@@ -39,24 +39,34 @@ public class RabbitMqConfig {
     @Bean
     public Queue registerEventStoreQueue() {
         return QueueBuilder.durable(REGISTER_EVENT_STORE_QUEUE)
+                .withArgument("x-queue-type", "quorum")
+                .withArgument("x-delivery-limit", 4)
                 .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE)
                 .withArgument("x-dead-letter-routing-key", DEAD_LETTER_EXCHANGE_EVENT_STORE_ROUTING_KEY)
                 .build();
     }
     @Bean
     public Queue deadLetterEventStoreQueue() {
-        return QueueBuilder.durable(DEAD_LETTER_EVENT_STORE_QUEUE).build();
+        return QueueBuilder.durable(DEAD_LETTER_EVENT_STORE_QUEUE)
+                .withArgument("x-queue-type", "quorum")
+                .withArgument("x-delivery-limit", 4)
+                .build();
     }
     @Bean
     public Queue changeProductStatusQueue() {
         return QueueBuilder.durable(CHANGE_PRODUCT_STATUS_QUEUE)
+                .withArgument("x-queue-type", "quorum")
+                .withArgument("x-delivery-limit", 4)
                 .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE)
                 .withArgument("x-dead-letter-routing-key", DEAD_LETTER_EXCHANGE_PRODUCT_ROUTING_KEY)
                 .build();
     }
     @Bean
     public Queue deadLetterProductQueue() {
-        return QueueBuilder.durable(DEAD_LETTER_PRODUCT_QUEUE).build();
+        return QueueBuilder.durable(DEAD_LETTER_PRODUCT_QUEUE)
+                .withArgument("x-queue-type", "quorum")
+                .withArgument("x-delivery-limit", 4)
+                .build();
     }
 
     /* Exchange */
