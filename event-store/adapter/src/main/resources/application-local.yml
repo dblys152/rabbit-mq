@@ -24,7 +24,13 @@ spring:
     host: localhost:5672
     username: ysrabbit
     password: ysrabbit
+    publisher-confirm-type: CORRELATED
 
 rabbitmq:
   queue:
     register-event-store: q.register-event-store
+    dead-letter-event-store: q.dead-letter-event-store
+  exchange:
+    dead-letter:
+      name: x.dead-letter-topic
+      event-store-routing-key: failed-event-store

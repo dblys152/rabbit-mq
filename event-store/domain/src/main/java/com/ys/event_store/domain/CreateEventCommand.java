@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Getter
 public class CreateEventCommand extends SelfValidating<CreateEventCommand> {
@@ -15,7 +14,7 @@ public class CreateEventCommand extends SelfValidating<CreateEventCommand> {
     String type;
 
     @NotNull
-    private Map<String, Object> payload;
+    private Object payload;
 
     @Size(min = 1, max = 39)
     private String publisherId;
@@ -23,7 +22,7 @@ public class CreateEventCommand extends SelfValidating<CreateEventCommand> {
     @NotNull
     private LocalDateTime publishedAt;
 
-    public CreateEventCommand(String type, Map<String, Object> payload, String publisherId, LocalDateTime publishedAt) {
+    public CreateEventCommand(String type, Object payload, String publisherId, LocalDateTime publishedAt) {
         this.type = type;
         this.payload = payload;
         this.publisherId = publisherId;

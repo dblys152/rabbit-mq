@@ -21,7 +21,7 @@ public class Event {
     private String type;
 
     @NotNull
-    private Map<String, Object> payload;
+    private Object payload;
 
     @Size(min = 1, max = 39)
     private String publisherId;
