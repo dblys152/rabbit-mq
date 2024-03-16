@@ -22,7 +22,7 @@ public class ProductQueryController {
     private final GetProductQuery getProductQuery;
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ApiResponseModel<ProductModel>> getAll(@PathVariable("productId") long productId) {
+    public ResponseEntity<ApiResponseModel<ProductModel>> getProduct(@PathVariable("productId") long productId) {
         Product product = getProductQuery.getById(ProductId.of(productId));
 
         return ResponseEntity.status(HttpStatus.OK).body(ApiResponseModel.success(
