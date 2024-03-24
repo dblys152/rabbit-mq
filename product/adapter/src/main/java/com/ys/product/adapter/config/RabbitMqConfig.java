@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 public class RabbitMqConfig {
+    private static final String QUORUM_QUEUE_TYPE = "quorum";
+
     @Value("${rabbitmq.queue.change-product-status}")
     private String CHANGE_PRODUCT_STATUS_QUEUE;
     @Value("${rabbitmq.queue.dead-letter-product}")
@@ -28,18 +30,24 @@ public class RabbitMqConfig {
     /* Queue */
     @Bean
     public Queue changeProductStatusQueue() {
-        return QueueBuilder.durable(CHANGE_PRODUCT_STATUS_QUEUE)
-                .withArgument("x-queue-type", "quorum")
-                .withArgument("x-delivery-limit", 4)
-                .withArgument("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE)
-                .withArgument("x-dead-letter-routing-key", DEAD_LETTER_EXCHANGE_PRODUCT_ROUTING_KEY)
-                .build();
+        return makeQueue(CHANGE_PRODUCT_STATUS_QUEUE, QUORUM_QUEUE_TYPE, 4, DEAD_LETTER_EXCHANGE, DEAD_LETTER_EXCHANGE_PRODUCT_ROUTING_KEY);
     }
     @Bean
     public Queue deadLetterProductQueue() {
-        return QueueBuilder.durable(DEAD_LETTER_PRODUCT_QUEUE)
-                .withArgument("x-queue-type", "quorum")
-                .withArgument("x-delivery-limit", 4)
+        return makeQueue(DEAD_LETTER_PRODUCT_QUEUE, QUORUM_QUEUE_TYPE, 4);
+    }
+    private Queue makeQueue(String name, String type, int deliveryLimit, String dlxName, String dlxRoutingKey) {
+        return QueueBuilder.durable(name)
+                .withArgument("x-queue-type", type)
+                .withArgument("x-delivery-limit", deliveryLimit)
+                .withArgument("x-dead-letter-exchange", dlxName)
+                .withArgument("x-dead-letter-routing-key", dlxRoutingKey)
+                .build();
+    }
+    private Queue makeQueue(String name, String type, int deliveryLimit) {
+        return QueueBuilder.durable(name)
+                .withArgument("x-queue-type", type)
+                .withArgument("x-delivery-limit", deliveryLimit)
                 .build();
     }
 
